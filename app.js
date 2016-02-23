@@ -60,6 +60,7 @@ io.on('connection', function(socket) {
             name: roomName,
             members: 0      //number of members in this room
         };
+
         console.log('New room ID: '+ id + ', Name: '+ rooms[id].name);
         socket.emit('room-list', {
             rooms: rooms
@@ -76,12 +77,25 @@ io.on('connection', function(socket) {
     })
 
     socket.on('msg-to-server', function(msg){
-        // socket.rooms[0] //this is a private room for each user created when they join the connection
-        var roomId = socket.rooms[1];
-        io.to(roomId).emit('msg-to-clients', {  //-------<<<NEW>>>--------//send msg to specific room
-            msg: msg
+        // UPDATE VALUE FOR GRAPH WITH MSG
+        io.to(roomId).emit('update-graph', {
+            yay: yay,
+            nay: nay,
+            poop: poop,
+            wtf: wtf,
+            uh: uh
         })
-    });
+    })
+
+    // socket.on('msg-to-server', function(msg){
+    //     // socket.rooms[0] //this is a private room for each user created when they join the connection
+    //     var roomId = socket.rooms[1];
+    //     io.to(roomId).emit('msg-to-clients', {  //-------<<<NEW>>>--------//send msg to specific room
+    //         msg: msg
+    //     })
+
+
+    // });
 
     // Disconnecting
     socket.on('disconnect', function() {

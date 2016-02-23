@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Web Advanced JavaScript: Fall 2015</title>
+	<title>React</title>
 	<meta charset="utf-8" />
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
@@ -11,18 +11,17 @@
 </head>
 <body>
 
-	<!-- container in which it will render templates -->
 	<div id="main-container"></div>
 	<!-- Templates -->
 	
 	<!-- Lobby -->
 	<script id="tpl-lobby" type="text/html">
 		
-		<h1>Chat Rooms</h1>
+		<h1>Current Reactions</h1>
 
-		<!-- List of chat rooms -->
+		<!-- List of reactions -->
 		<div id="list-container">
-			<!-- Loop through chat rooms here -->
+			<!-- Loop through rooms here -->
 			<% for(var roomId in data){ %>
 				<div class="room-item">
 					<a class="body-main" href="#/room/<%= roomId %>">
@@ -38,9 +37,7 @@
 		<!-- Input -->
 		<div id="chat-input">
 			<div>
-				<!-- naming convention: js-: element has a js function
-				ipt-: type of element is input -->
-				<input type="text" id="js-ipt-room-name" placeholder="Create a new room">
+				<input type="text" id="js-ipt-room-name" placeholder="Create a new reaction">
 			</div>
 			<div>
 				<button id="js-btn-create-room">CREATE</button>
@@ -53,37 +50,42 @@
 	<script id="tpl-room" type="text/html">
 		<a href="#/lobby">< Back to Lobby</a>		
 
-		<!-- Chat room title -->
+		<!-- reaction title -->
 		<h1>
 			<%= data.name %>
 		</h1>
 		
-		<div class="list-container">		
-		<!-- Messages -->
-			<div id="chat-container"></div>
+		<div class="reaction-container">		
+			<div id="graph"></div>
 		</div>
 
-		<div id="chat-input">
+<!-- 		<div id="chat-input">
 				<input type="text" id="js-ipt-text" placeholder="Type here">
-				<button id="js-btn-send">SEND</button>
+				<button id="js-btn-send">YAY</button>
+		</div> -->
+		<div id="vote-inputs">
+				<button id="js-btn-send-yay">YAY</button>
+				<button id="js-btn-send-nay">NAY</button>
+				<button id="js-btn-send-poop">POOP</button>
+				<button id="js-btn-send-wtf">WTF</button>
+				<button id="js-btn-send-uh">UH</button>
+		</div>
+
+	</script>
+
+	<!-- Graph -->
+	<script id="tpl-graph-value" type="text/html">
+		<div id="sentiments">
+			<ul>
+				<li id="yay"> <%=data.yay=> </li>
+				<li id="nay"> <%=data.nay=> </li>
+				<li id="poop"> <%=data.poop=> </li>
+				<li id="wtf"> <%=data.wtf=> </li>
+				<li id="uh"> <%=data.uh=> </li>
+			</ul>
 		</div>
 	</script>
 
-	<!-- Chat item -->
-	<script id="tpl-chat-item" type="text/html">
-		<div class="chat-item">
-			<!-- Timestamp and message here -->
-			<div class='body-aux'>
-				<%= data.timestamp %>
-			</div>
-			<div class='body-main'>
-				<%= data.msg %>
-			</div>
-		</div>
-	</script>		
-
-	<!-- Don't add this as a file!
-		 The path will be created when you run the server -->
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="js/jquery-min.js"></script>
 	<script type="text/javascript" src="js/underscore-min.js"></script>

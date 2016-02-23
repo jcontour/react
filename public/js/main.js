@@ -23,16 +23,15 @@ app.main = (function() {
 	    	render('room', '#main-container', 'replace', res.room);
 	    });
 
-	    socket.on('msg-to-clients', function(res){
+	    socket.on('update-graph', function(res){
 	    	console.log(res);
-	    	render('chat-item', '#chat-container', 'append', {
-	    		timestamp: moment().format('hh:mm a'),
+	    	render('graph-value', '#graph', 'replace', {
 	    		msg: res.msg
 	    	});
 	    });
+
 	}
 
-	// Remember this one? Straight from our lesson #3
     var hashRouter = function(){
 		$(window).off('hashchange').on('hashchange', function() {
 	    	var currentPage = location.hash.substring(2, location.hash.length);
@@ -49,15 +48,11 @@ app.main = (function() {
 	    });
 	}
 
-	// Any change to our hash will trigger this,
-	// which will ask for some data from the server
 	var loadData = function(template, data){
 		console.log('Loading data for: ' + template);
 		socket.emit(template, data);
 	};
 
-	// This is also from lesson #3, just adding some parameters:
-	// method is either replace or append
 	var render = function(template, containerElement, method, data){
 		console.log(method + ' ' + template + ' in ' + containerElement);
 		if(data !== undefined){
@@ -66,18 +61,14 @@ app.main = (function() {
 		var templateToCompile = $('#tpl-' + template).html();
 		var compiled =  _.template(templateToCompile);
 		if (method == 'replace') {
-			// underscore returns a string of html text
 			$(containerElement).html(compiled({data: data}));
 		} else if (method == 'append'){
 			$(containerElement).append(compiled({data: data}));
 		}
 
-		//scroll to bottom of container
-		var objDiv = document.getElementById('main-container');
-		objDiv.scrollTop = objDiv.scrollHeight;
+		// var objDiv = document.getElementById('main-container');
+		// objDiv.scrollTop = objDiv.scrollHeight;
 
-        // We've just created some new elements,
-        // so let's attach the events to them
         attachEvents();
 	};
 
@@ -88,15 +79,27 @@ app.main = (function() {
       		createRoom();
       	});
 
-      	$('#js-btn-send').off('click').on('click', function(){
-      		sendMessage();
+      	$('#js-btn-send-yay').off('click').on('click', function(){
+      		sendVote("yay");
       	});
-      	//unbind == .off 
-      	$('#js-ipt-text').unbind('keypress').keypress(function(e){
-      		if(e.keyCode == 13){
-      			sendMessage();
-      		}
+      	$('#js-btn-send-nay').off('click').on('click', function(){
+      		sendVote("nay");
       	});
+      	$('#js-btn-send-poop').off('click').on('click', function(){
+      		sendVote("poop");
+      	});
+      	$('#js-btn-send-wtf').off('click').on('click', function(){
+      		sendVote("wtf");
+      	});      	
+      	$('#js-btn-send-uh').off('click').on('click', function(){
+      		sendVote("uh");
+      	});      	
+      	// //unbind == .off 
+      	// $('#js-ipt-text').unbind('keypress').keypress(function(e){
+      	// 	if(e.keyCode == 13){
+      	// 		sendVote();
+      	// 	}
+      	// });
 	};
 
 	var createRoom = function(){
@@ -106,20 +109,9 @@ app.main = (function() {
 		}
 	}	
 
-	var sendMessage = function(){
-		var chatMsg = $('#js-ipt-text').val();
-		//checking to see if message has a script tag in it
-		//b/c scripts can mess with web page
-		var re = /<script\b[^>]*>([\s\S]*?)<\/script>/gm;
-        var isScript;
-        isScript = re.test(chatMsg);
-
-        if(!isScript){
-        	console.log('sending ' + chatMsg);
-        	socket.emit('msg-to-server', chatMsg);
-        }
-
-        $('#js-ipt-text').val('');
+	var sendVote = function(msg){
+    	console.log('sending ' + msg);
+    	socket.emit('msg-to-server', msg);
 	}
 
 	var init = function(){	
