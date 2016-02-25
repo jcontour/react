@@ -55,10 +55,16 @@ io.on('connection', function(socket) {
         var id = createId(7);
         // append new room to rooms object
         // [] creates a new parameter of the object
-        // ... that is also an object
         rooms[id] = {
             name: roomName,
-            members: 0      //number of members in this room
+            members: 0,
+            sentiments: {
+                yay: [0],
+                nay: [0],
+                poop: [0],
+                wtf: [0],
+                uh: [0]
+            }
         };
 
         console.log('New room ID: '+ id + ', Name: '+ rooms[id].name);
@@ -69,39 +75,51 @@ io.on('connection', function(socket) {
 
     socket.on('room', function(roomId){
         console.log('user has joined room ' + roomId);
-        socket.join(roomId); //-------<<<NEW>>>--------//
-        rooms[roomId].members ++;  //updating number of members
+        socket.join(roomId);
+        rooms[roomId].members ++;
         socket.emit('joined-room', {
             room: rooms[roomId]
         })
     })
 
     socket.on('msg-to-server', function(msg){
-        // UPDATE VALUE FOR GRAPH WITH MSG
-        io.to(roomId).emit('update-graph', {
-            yay: yay,
-            nay: nay,
-            poop: poop,
-            wtf: wtf,
-            uh: uh
-        })
+
+        //get room id
+        var roomId = socket.rooms[1];
+        
+        //remove id from all sentiments
+        removeId(socket.id, rooms[roomId].sentiments);
+        
+        //add user id to current sentiment 
+        rooms[roomId]["sentiments"][msg].push(socket.id);
+
+        //emit new sentiment values
+        io.to(roomId).emit('update-graph', rooms[roomId].sentiments );
     })
-
-    // socket.on('msg-to-server', function(msg){
-    //     // socket.rooms[0] //this is a private room for each user created when they join the connection
-    //     var roomId = socket.rooms[1];
-    //     io.to(roomId).emit('msg-to-clients', {  //-------<<<NEW>>>--------//send msg to specific room
-    //         msg: msg
-    //     })
-
-
-    // });
 
     // Disconnecting
     socket.on('disconnect', function() {
         io.sockets.emit('bye', 'See you, ' + socket.id + '!');
+        
+        //removes id from sentiments on disconnect
+        // var roomId = socket.rooms[1];
+        // removeId(socket.id, rooms[roomId]["sentiments"]);
+
     });
 });
+
+function removeId(id, sentimentobj){
+    //loop through sentiments and remove user id if there. 
+    for (var prop in sentimentobj) {
+        if (!sentimentobj.hasOwnProperty(prop)) continue;
+
+            var sentiment = sentimentobj[prop];
+
+            if (sentiment.indexOf(id) !== -1 ){
+                sentiment.splice(sentiment.indexOf(id), 1);
+            }
+    }
+}
 
 // https://gist.github.com/gordonbrander/2230317
 function createId(n) {

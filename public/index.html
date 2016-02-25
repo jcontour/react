@@ -50,19 +50,14 @@
 	<script id="tpl-room" type="text/html">
 		<a href="#/lobby">< Back to Lobby</a>		
 
-		<!-- reaction title -->
 		<h1>
 			<%= data.name %>
 		</h1>
 		
-		<div class="reaction-container">		
-			<div id="graph"></div>
+		<div class="reaction-container">
+			<div id="graph"> </div>
 		</div>
 
-<!-- 		<div id="chat-input">
-				<input type="text" id="js-ipt-text" placeholder="Type here">
-				<button id="js-btn-send">YAY</button>
-		</div> -->
 		<div id="vote-inputs">
 				<button id="js-btn-send-yay">YAY</button>
 				<button id="js-btn-send-nay">NAY</button>
@@ -74,16 +69,15 @@
 	</script>
 
 	<!-- Graph -->
-	<script id="tpl-graph-value" type="text/html">
-		<div id="sentiments">
-			<ul>
-				<li id="yay"> <%=data.yay=> </li>
-				<li id="nay"> <%=data.nay=> </li>
-				<li id="poop"> <%=data.poop=> </li>
-				<li id="wtf"> <%=data.wtf=> </li>
-				<li id="uh"> <%=data.uh=> </li>
-			</ul>
-		</div>
+	<script id="tpl-graph" type="text/html">
+		<!-- <% console.log(data) %> -->
+		<ul>
+			<li id="yay"> <%= data["yay"].length %> </li>
+			<li id="nay"> <%= data["nay"].length %> </li>
+			<li id="poop"> <%= data["poop"].length %> </li>
+			<li id="wtf"> <%= data["wtf"].length %> </li>
+			<li id="uh"> <%= data["uh"].length %> </li>
+		</ul>
 	</script>
 
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>

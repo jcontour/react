@@ -35,15 +35,15 @@ a:link, a:visited, a:active, a:hover{
 
 #chat-input {
 	position: absolute;
-	bottom: 20px;
-	left: 20px;
-	width: calc(100% - 40px);
-	background: rgba(60, 210, 180, 0.5);
+	bottom: 40px;
+	left: calc(50% - 250px);
+	width: 500px;
+	background: rgba(0, 0, 0, 0.5);
 	padding: 10px;
 }
 
 input, button{
-	border: 1px #333 solid;
+	border: 1px #FFF solid;
 	height: 30px;
 	padding: 0 10px;
 	font-size: 13px;
@@ -59,10 +59,9 @@ input{
 button{
 	background: #333;
 	width: 80px;
-	color: rgb(60, 210, 180);
+	color: #FFF;
 }
 
-/* Typography */
 h1{
 	font-size: 42px;
 }

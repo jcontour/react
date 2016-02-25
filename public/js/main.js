@@ -19,17 +19,16 @@ app.main = (function() {
 	    }); 
 
 	    socket.on('joined-room', function(res){
-	    	console.log(res);
+	    	// console.log(res);
 	    	render('room', '#main-container', 'replace', res.room);
+	    	// console.log(res.room.sentiments)
+	    	render('graph', '#graph', 'replace', res.room.sentiments);	    
 	    });
 
 	    socket.on('update-graph', function(res){
 	    	console.log(res);
-	    	render('graph-value', '#graph', 'replace', {
-	    		msg: res.msg
-	    	});
+	    	render('graph', '#graph', 'replace', res);
 	    });
-
 	}
 
     var hashRouter = function(){
@@ -66,9 +65,6 @@ app.main = (function() {
 			$(containerElement).append(compiled({data: data}));
 		}
 
-		// var objDiv = document.getElementById('main-container');
-		// objDiv.scrollTop = objDiv.scrollHeight;
-
         attachEvents();
 	};
 
@@ -80,6 +76,7 @@ app.main = (function() {
       	});
 
       	$('#js-btn-send-yay').off('click').on('click', function(){
+      		console.log("yay");
       		sendVote("yay");
       	});
       	$('#js-btn-send-nay').off('click').on('click', function(){
@@ -93,13 +90,7 @@ app.main = (function() {
       	});      	
       	$('#js-btn-send-uh').off('click').on('click', function(){
       		sendVote("uh");
-      	});      	
-      	// //unbind == .off 
-      	// $('#js-ipt-text').unbind('keypress').keypress(function(e){
-      	// 	if(e.keyCode == 13){
-      	// 		sendVote();
-      	// 	}
-      	// });
+      	});
 	};
 
 	var createRoom = function(){
