@@ -76,7 +76,6 @@ app.main = (function() {
       	});
 
       	$('#js-btn-send-yay').off('click').on('click', function(){
-      		console.log("yay");
       		sendVote("yay");
       	});
       	$('#js-btn-send-nay').off('click').on('click', function(){
