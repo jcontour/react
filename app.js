@@ -59,11 +59,11 @@ io.on('connection', function(socket) {
             name: roomName,
             members: 0,
             sentiments: {
-                yay: [0],
-                nay: [0],
-                poop: [0],
-                wtf: [0],
-                uh: [0]
+                yay: [],
+                nay: [],
+                poop: [],
+                wtf: [],
+                uh: []
             }
         };
 
