@@ -133,46 +133,7 @@ io.on('connection', function(socket) {
 
         //emit new sentiment values
         io.to(roomId).emit('update-graph', rooms[roomId].sentiments );
-    });
-
-    // if (function(msg) { 
-    //         console.log('Received Message: ' + msg); 
-    //         var saveCurrTime = 5; 
-    //         //does stuff on a timer running every 5 seconds of every minute
-    //         new CronJob('*/5 * * * * *', function(){ //six parameters // sec min (24)hour day month dayoftheweek
-    //             saveCurrTime++;
-    //             io.emit(rooms[roomId].sentiments + counter);   
-    //             console.log(rooms[roomId].sentiments + counter);
-    //             // saveCurrTime();
-    //         }, null, true, "msg-to-server"); 
-
-    //         fs.appendFile('timestamps.txt', msg, function(saveCurrTime){
-    //         console.log("sentiments");
-    //         });
-
-        // function saveCurrTime(){
-        // var myData = new Date();    //date object
-        //     myData = myData.toString() + '\n';      //turn it to string
-
-        // fs.appendFile('timestamps.txt', myData, function(){
-        //     console.log("sentiments");
-        //     });
-        // }
-
-    // connection.on('message', function(message) {          
-    // if (message.type === 'utf8') {              
-    //     console.log('Received Message: ' + message.utf8Data);              
-    //     var counter = 0;                 
-    //     new cronJob('* * * * * *', function(){                  
-    //         counter++;                  
-    //         connection.sendUTF("Hello" + counter);                  
-    //         console.log("Hello" + counter);              
-    //     }, null, true, "America/Los_Angeles");          
-    // } else if (message.type === 'binary') {              
-    //     console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');              
-    //     connection.sendBytes(message.binaryData);         
-    //      }      
-    // });         
+    });        
 
     // Disconnecting
     socket.on('disconnect', function() {
