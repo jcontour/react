@@ -1,8 +1,22 @@
+// Hello.
+//
+// This is JSHint, a tool that helps to detect errors and potential
+// problems in your JavaScript code.
+//
+// To start, simply enter some JavaScript anywhere on this page. Your
+// report will appear on the right side.
+//
+// Additionally, you can toggle specific options in the Configure
+// menu.
+
 /*---------- BASIC SETUP ----------*/
 var express     = require('express'),
     bodyParser  = require('body-parser');   // helper for parsing HTTP requests
 var app = express();                        // our Express app
 var PORT = 4000;
+
+var CronJob = require('cron').CronJob,
+    fs = require('fs');
 
 // Body Parser
 app.use(bodyParser.urlencoded({ extended: false }));// parse application/x-www-form-urlencoded
@@ -79,8 +93,8 @@ io.on('connection', function(socket) {
         rooms[roomId].members ++;
         socket.emit('joined-room', {
             room: rooms[roomId]
-        })
-    })
+        });
+    });
 
     socket.on('msg-to-server', function(msg){
         //get room id
@@ -94,9 +108,33 @@ io.on('connection', function(socket) {
             rooms[roomId]["sentiments"][msg].push(socket.id);   
         }
         
+        var yays = rooms[roomId].sentiments.yay.length;
+        var nays = rooms[roomId].sentiments.nay.length;
+        var poops = rooms[roomId].sentiments.poop.length;
+        var wtfs = rooms[roomId].sentiments.wtf.length;
+        var uhs = rooms[roomId].sentiments.uh.length;
+
+        console.log(yays);
+
+        // When the server receives a “message” type signal from the client   
+        console.log('A client is speaking to me! They’re saying: ' + msg);
+                // var saveCurrTime = 5; 
+                 //does stuff on a timer running every 5 seconds of every minute
+                new CronJob('*/15 * * * * *', function(){ //six parameters // sec min (24)hour day month dayoftheweek
+                // * * * * * *
+
+                var totalCurrTime = yays + nays + poops + wtfs + uhs;
+
+                // console.log("THE CURRENTIME: "+ saveCurrTime);
+
+                io.emit(totalCurrTime);   
+             //  io.emit("TOTAL SENTIMENTS: "+totalCurrTime + saveCurrTime);  
+               console.log("TOTAL SENTIMENTS: "+ totalCurrTime); 
+            }, null, true, "msg-to-server"); 
+
         //emit new sentiment values
         io.to(roomId).emit('update-graph', rooms[roomId].sentiments );
-    })
+    });        
 
     //leaving a room
     socket.on('exit-room', function(){
@@ -137,6 +175,7 @@ function removeId(id, sentimentobj){
     }
 }
 
+
 // https://gist.github.com/gordonbrander/2230317
 function createId(n) {
     // Math.random should be unique because of its seeding algorithm.
@@ -144,4 +183,3 @@ function createId(n) {
     // after the decimal.
     return Math.random().toString(36).substr(2, n);
 }
-
