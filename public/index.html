@@ -48,7 +48,7 @@
 
 	<!-- Chatroom -->
 	<script id="tpl-room" type="text/html">
-		<a href="#/lobby">< Back to Lobby</a>		
+		<a href="#/lobby" id="js-btn-exit-room">< Back to Lobby</a>		
 
 		<h1>
 			<%= data.name %>
@@ -72,11 +72,11 @@
 	<script id="tpl-graph" type="text/html">
 		<!-- <% console.log(data) %> -->
 		<ul>
-			<li id="yay"> <%= data["yay"].length %> </li>
-			<li id="nay"> <%= data["nay"].length %> </li>
-			<li id="poop"> <%= data["poop"].length %> </li>
-			<li id="wtf"> <%= data["wtf"].length %> </li>
-			<li id="uh"> <%= data["uh"].length %> </li>
+			<li id="yay"> YAY: <%= data["yay"].length %> </li>
+			<li id="nay"> NAY: <%= data["nay"].length %> </li>
+			<li id="poop"> POOP: <%= data["poop"].length %> </li>
+			<li id="wtf"> WTF: <%= data["wtf"].length %> </li>
+			<li id="uh"> UH:  <%= data["uh"].length %> </li>
 		</ul>
 	</script>
 

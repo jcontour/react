@@ -6,6 +6,7 @@ app.main = (function() {
 	console.log('Your code starts here!');
 
 	var socket;
+	var roomId;
 
 	// connect to socket server
 	var socketSetup = function(callback){
@@ -21,6 +22,7 @@ app.main = (function() {
 	    socket.on('joined-room', function(res){
 	    	// console.log(res);
 	    	render('room', '#main-container', 'replace', res.room);
+	    	roomId = res.room;
 	    	// console.log(res.room.sentiments)
 	    	render('graph', '#graph', 'replace', res.room.sentiments);	    
 	    });
@@ -89,6 +91,13 @@ app.main = (function() {
       	});      	
       	$('#js-btn-send-uh').off('click').on('click', function(){
       		sendVote("uh");
+      	});
+
+      	$('#js-btn-exit-room').off('click').on('click', function(){
+      		console.log('exit room.');
+      		sendVote("remove");
+      		socket.emit('exit-room');
+
       	});
 	};
 

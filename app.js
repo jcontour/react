@@ -83,30 +83,46 @@ io.on('connection', function(socket) {
     })
 
     socket.on('msg-to-server', function(msg){
-
         //get room id
         var roomId = socket.rooms[1];
-        
+
         //remove id from all sentiments
         removeId(socket.id, rooms[roomId].sentiments);
-        
-        //add user id to current sentiment 
-        rooms[roomId]["sentiments"][msg].push(socket.id);
 
+        if (msg !== "remove") {
+            //add user id to current sentiment 
+            rooms[roomId]["sentiments"][msg].push(socket.id);   
+        }
+        
         //emit new sentiment values
         io.to(roomId).emit('update-graph', rooms[roomId].sentiments );
+    })
+
+    //leaving a room
+    socket.on('exit-room', function(){
+        console.log('left room')
+        leaveAllRooms(socket);
     })
 
     // Disconnecting
     socket.on('disconnect', function() {
         io.sockets.emit('bye', 'See you, ' + socket.id + '!');
         
-        //removes id from sentiments on disconnect
-        // var roomId = socket.rooms[1];
-        // removeId(socket.id, rooms[roomId]["sentiments"]);
+        leaveAllRooms(socket);
 
     });
 });
+
+function leaveAllRooms(socket){
+    console.log('Called leaveAllRooms.');
+    console.log(socket.rooms);
+    for(var i = 1; i < socket.rooms.length; i++){
+        var roomId = socket.rooms[i];
+        socket.leave(roomId);
+        rooms[roomId].members --;
+        console.log('Leaving ' + roomId + '. Members: ' + rooms[roomId].members);
+    }
+}
 
 function removeId(id, sentimentobj){
     //loop through sentiments and remove user id if there. 
