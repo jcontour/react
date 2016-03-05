@@ -23,6 +23,9 @@ app.main = (function() {
 	    	// console.log(res);
 	    	render('room', '#main-container', 'replace', res.room);
 	    	roomId = res.room;
+
+	    	getUserInfo();
+
 	    	// console.log(res.room.sentiments)
 	    	render('graph', '#graph', 'replace', res.room.sentiments);	    
 	    });
@@ -47,6 +50,13 @@ app.main = (function() {
 	        	loadData(currentPage, roomId);
 	        }
 	    });
+	}
+
+	var getUserInfo = function(){
+		var age = prompt("How old are you?", "enter a number");
+		var party = prompt("What party do you support?", "Democrat, Republican, or Other?");
+		var city = prompt("What city do you live in?", " ");
+		socket.emit('user-info', { age : age, party : party, city : city });
 	}
 
 	var loadData = function(template, data){

@@ -47,13 +47,14 @@ server.listen(PORT, function(){
 });
 
 var rooms = {};
+var user = {}
+// var users = []
 
 /*-------------- APP --------------*/
 io.on('connection', function(socket) {
     /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
 
     console.log('A new user has connected: ' + socket.id);
-
     // Listeners
 
     // when user enters lobby
@@ -63,6 +64,19 @@ io.on('connection', function(socket) {
             rooms: rooms
         });
     });
+
+    // getting user demographic
+    socket.on('user-info', function(info){
+        user.age = info.age;
+        user.party = info.party;
+        user.city = info.city;
+        user.id = socket.id;
+
+        console.log(user);
+        // users.push(user);
+        // console.log(users);
+    })
+
     // when user creates a new room
     socket.on('create-room', function(roomName){
         // create a random ID of chars & numbers with 7 char
@@ -124,7 +138,6 @@ io.on('connection', function(socket) {
                 // * * * * * *
 
                 var totalCurrTime = yays + nays + poops + wtfs + uhs;
-
                 // console.log("THE CURRENTIME: "+ saveCurrTime);
 
                 io.emit(totalCurrTime);   
