@@ -51,7 +51,7 @@
 
 	<!-- Chatroom -->
 	<script id="tpl-room" type="text/html">
-		<a href="#/lobby">< Back to Lobby</a>		
+		<a href="#/lobby" id="js-btn-exit-room">< Back to Lobby</a>		
 
 		<h1>
 			<%= data.name %>
@@ -74,13 +74,50 @@
 	<!-- Graph -->
 	<script id="tpl-graph" type="text/html">
 		<!-- <% console.log(data) %> -->
-		<ul>
-			<li id="yay"> <%= data["yay"].length %> </li>
-			<li id="nay"> <%= data["nay"].length %> </li>
-			<li id="poop"> <%= data["poop"].length %> </li>
-			<li id="wtf"> <%= data["wtf"].length %> </li>
-			<li id="uh"> <%= data["uh"].length %> </li>
+		<ul id="graph">
+			<li id="yay"> YAY: <%= data["yay"].length %> </li>
+			<li id="nay"> NAY: <%= data["nay"].length %> </li>
+			<li id="poop"> POOP: <%= data["poop"].length %> </li>
+			<li id="wtf"> WTF: <%= data["wtf"].length %> </li>
+			<li id="uh"> UH:  <%= data["uh"].length %> </li>
 		</ul>
+
+		<div>
+		<svg id="visualisation" width="1000" height="500"></svg>
+		</div>
+
+	<script>
+	var vis = d3.select("#visualisation"),
+    WIDTH = 400,
+    HEIGHT = 250,
+    MARGINS = {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 50
+    },
+
+    xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([0, 180]),
+
+    yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0,100]),
+
+    xAxis = d3.svg.axis()
+    	.scale(xScale),
+  
+  	yAxis = d3.svg.axis()
+    	.scale(yScale)
+    	.orient("left");
+
+    vis.append("svg:g")
+    .attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
+    .call(xAxis);
+
+	vis.append("svg:g")
+    	.attr("transform", "translate(" + (MARGINS.left) + ",0)")
+    	.call(yAxis);
+    </script>
+
+
 	</script>
 
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>

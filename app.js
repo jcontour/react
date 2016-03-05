@@ -47,13 +47,14 @@ server.listen(PORT, function(){
 });
 
 var rooms = {};
+var user = {}
+// var users = []
 
 /*-------------- APP --------------*/
 io.on('connection', function(socket) {
     /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
 
     console.log('A new user has connected: ' + socket.id);
-
     // Listeners
 
     // when user enters lobby
@@ -63,6 +64,19 @@ io.on('connection', function(socket) {
             rooms: rooms
         });
     });
+
+    // getting user demographic
+    socket.on('user-info', function(info){
+        user.age = info.age;
+        user.party = info.party;
+        user.city = info.city;
+        user.id = socket.id;
+
+        console.log(user);
+        // users.push(user);
+        // console.log(users);
+    })
+
     // when user creates a new room
     socket.on('create-room', function(roomName){
         // create a random ID of chars & numbers with 7 char
@@ -97,16 +111,17 @@ io.on('connection', function(socket) {
     });
 
     socket.on('msg-to-server', function(msg){
-
         //get room id
         var roomId = socket.rooms[1];
-        
+
         //remove id from all sentiments
         removeId(socket.id, rooms[roomId].sentiments);
-        
-        //add user id to current sentiment 
-        rooms[roomId]["sentiments"][msg].push(socket.id);
 
+        if (msg !== "remove") {
+            //add user id to current sentiment 
+            rooms[roomId]["sentiments"][msg].push(socket.id);   
+        }
+        
         var yays = rooms[roomId].sentiments.yay.length;
         var nays = rooms[roomId].sentiments.nay.length;
         var poops = rooms[roomId].sentiments.poop.length;
@@ -123,7 +138,6 @@ io.on('connection', function(socket) {
                 // * * * * * *
 
                 var totalCurrTime = yays + nays + poops + wtfs + uhs;
-
                 // console.log("THE CURRENTIME: "+ saveCurrTime);
 
                 io.emit(totalCurrTime);   
@@ -135,16 +149,31 @@ io.on('connection', function(socket) {
         io.to(roomId).emit('update-graph', rooms[roomId].sentiments );
     });        
 
+    //leaving a room
+    socket.on('exit-room', function(){
+        console.log('left room')
+        leaveAllRooms(socket);
+    })
+
     // Disconnecting
     socket.on('disconnect', function() {
         io.sockets.emit('bye', 'See you, ' + socket.id + '!');
         
-        //removes id from sentiments on disconnect
-        // var roomId = socket.rooms[1];
-        // removeId(socket.id, rooms[roomId]["sentiments"]);
+        leaveAllRooms(socket);
 
     });
 });
+
+function leaveAllRooms(socket){
+    console.log('Called leaveAllRooms.');
+    console.log(socket.rooms);
+    for(var i = 1; i < socket.rooms.length; i++){
+        var roomId = socket.rooms[i];
+        socket.leave(roomId);
+        rooms[roomId].members --;
+        console.log('Leaving ' + roomId + '. Members: ' + rooms[roomId].members);
+    }
+}
 
 function removeId(id, sentimentobj){
     //loop through sentiments and remove user id if there. 

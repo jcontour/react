@@ -6,6 +6,7 @@ app.main = (function() {
 	console.log('Your code starts here!');
 
 	var socket;
+	var roomId;
 
 	// connect to socket server
 	var socketSetup = function(callback){
@@ -21,6 +22,12 @@ app.main = (function() {
 	    socket.on('joined-room', function(res){
 	    	// console.log(res);
 	    	render('room', '#main-container', 'replace', res.room);
+	    	roomId = res.room;
+
+	    	// turn this into a full page that shows up before the room page
+	    	// make with radio buttons and stuff. 
+	    	getUserInfo();
+
 	    	// console.log(res.room.sentiments)
 	    	render('graph', '#graph', 'replace', res.room.sentiments);	    
 	    });
@@ -45,6 +52,13 @@ app.main = (function() {
 	        	loadData(currentPage, roomId);
 	        }
 	    });
+	}
+
+	var getUserInfo = function(){
+		var age = prompt("How old are you?", "enter a number");
+		var party = prompt("What party do you support?", "Democrat, Republican, or Other?");
+		var city = prompt("What city do you live in?", " ");
+		socket.emit('user-info', { age : age, party : party, city : city });
 	}
 
 	var loadData = function(template, data){
@@ -89,6 +103,13 @@ app.main = (function() {
       	});      	
       	$('#js-btn-send-uh').off('click').on('click', function(){
       		sendVote("uh");
+      	});
+
+      	$('#js-btn-exit-room').off('click').on('click', function(){
+      		console.log('exit room.');
+      		sendVote("remove");
+      		socket.emit('exit-room');
+
       	});
 	};
 
