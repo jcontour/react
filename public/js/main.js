@@ -24,6 +24,8 @@ app.main = (function() {
 	    	render('room', '#main-container', 'replace', res.room);
 	    	roomId = res.room;
 
+	    	// turn this into a full page that shows up before the room page
+	    	// make with radio buttons and stuff. 
 	    	getUserInfo();
 
 	    	// console.log(res.room.sentiments)
