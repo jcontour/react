@@ -87,7 +87,20 @@
 		</div>
 
 	<script>
-	var vis = d3.select("#visualisation"),
+
+var data = [{
+    #js-btn-send-yay
+}, {
+    
+}, {
+    
+}, {
+    
+}, {
+    
+}];
+
+var vis = d3.select("#visualisation"),
     WIDTH = 400,
     HEIGHT = 250,
     MARGINS = {
@@ -99,7 +112,7 @@
 
     xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([0, 180]),
 
-    yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0,100]),
+    yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([134,215]),
 
     xAxis = d3.svg.axis()
     	.scale(xScale),
@@ -115,6 +128,30 @@
 	vis.append("svg:g")
     	.attr("transform", "translate(" + (MARGINS.left) + ",0)")
     	.call(yAxis);
+
+var lineGen = d3.svg.line()
+  var lineGen = d3.svg.line()
+    .x(function(d) {
+        return xScale(d.year);
+    })
+    .y(function(d) {
+        return yScale(d.sale);
+    })
+    .interpolate("basis");
+
+  vis.append('svg:path')
+  .attr('d', lineGen(data))
+  .attr('stroke', 'green')
+  .attr('stroke-width', 2)
+  .attr('fill', 'none');
+
+// vis.append('svg:path')
+//   .attr('d', lineGen(data2))
+//   .attr('stroke', 'blue')
+//   .attr('stroke-width', 2)
+//   .attr('fill', 'none');
+
+
     </script>
 
 
