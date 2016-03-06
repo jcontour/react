@@ -132,6 +132,14 @@
 
 		console.log (data);
 
+		var dataGroup = d3.nest()
+    		.key(function(d) {
+        	return d.data;
+   		})
+    		.entries(data);
+
+    	console.log(dataGroup);	
+
 		var vis = d3.select("#visualisation"),
     	WIDTH = 400,
     	HEIGHT = 250,
@@ -142,9 +150,9 @@
         	left: 50
     	},
 
-    	xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([0, 240]),
+    	xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([0, 5]),
 
-    	yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0,5]),
+    	yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0,10]),
 
     	xAxis = d3.svg.axis()
     	.scale(xScale),
@@ -171,15 +179,15 @@
     	})
     	.interpolate("basis");
 
-		data.forEach(function(d, i) {
+    	dataGroup.forEach(function(d, i) {
     		vis.append('svg:path')
-        		.attr('d', lineGen(data))
-        		.attr('stroke', function(d, j) {
-            	return "hsl(" + Math.random() * 360 + ",100%,50%)";
-        	})
-        		.attr('stroke-width', 2)
-        		.attr('fill', 'none');
-		});
+    		.attr('d', lineGen(data))
+    		.attr('stroke', function(d, j) {
+    			return "hsl(" + Math.random() * 360 + ",100%,50%)";
+    		})
+    		.attr('stroke-width', 2)
+    		.attr('fill', 'none');
+    	});
     	// vis.append('svg:path')
     	// .attr('d', lineGen(data))
     	// .attr('stroke', 'blue')
