@@ -24,7 +24,7 @@ app.main = (function() {
 
 	    	// turn this into a full page that shows up before the room page
 	    	// make with radio buttons and stuff. 
-	    	getUserInfo();
+	    	// getUserInfo();
 
 	    	// console.log(res.room.sentiments)
 	    	render('graph', '#graph', 'replace', res.room.sentiments);	    
@@ -107,8 +107,17 @@ app.main = (function() {
       		console.log('exit room.');
       		sendVote("remove");
       		socket.emit('exit-room');
-
       	});
+
+      	var buttons = $('button');
+		buttons.on('click', function() {
+			if ($(this).hasClass('active')){
+			  buttons.removeClass('active').addClass('inactive');
+			} else {
+			  buttons.removeClass('active').addClass('inactive');
+			  $(this).removeClass('inactive').addClass('active');
+	}
+});
 	};
 
 	var createRoom = function(){
