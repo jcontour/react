@@ -18,8 +18,8 @@
             shape-rendering: crispEdges;
         }
         .axis text {
-            font-family: Lato;
-            font-size: 13px;
+            font-family: helvetica;
+            font-size: 14px;
         }
     </style>
 
@@ -100,21 +100,27 @@
 
 	function InitChart() {
 
-		var yas = [
-			<%= data["yay"].length %>
-			];
+		// var yay = [<%= data["yay"].length %>];
+		// var nay = [<% data["nay"].length %>];
+		// var poop = [<% data["poop"].length %>];
+		// var wtf = [<% data["wtf"].length %>];
+		// var uh = [<% data["uh"].length %>];
+
+		
 		console.log ("is yay working?");
 
-		var nas = d3.select("#nay");
-		var poos = d3.select("#poos");
-		var whatthefucks = d3.select("#whatthefucks");
-		var uhhhhs = d3.select("#uhhhhs");
+		var data = [
+			<%= data["yay"].length %>
+		, 
+			<% data["nay"].length %>
+		,
+			<%= data["poop"].length %>
+		,
+			<%= data["wtf"].length %> 
+		,
+			<%= data["uh"].length %>
+		];
 
-
-		// var nas = <% data["nay"].length %>
-		// var poos = <% data["poop"].length %>
-		// var whatthefucks = <% data["wtf"].length %>
-		// var uhhhhs = <% data["uh"].length %>
 
 
 		var vis = d3.select("#visualisation"),
@@ -133,7 +139,6 @@
 
     	xAxis = d3.svg.axis()
     	.scale(xScale),
-
     	yAxis = d3.svg.axis()
     	.scale(yScale)
     	.orient("left");
@@ -149,45 +154,43 @@
     	.call(yAxis);
 
     	var lineGen = d3.svg.line()
-    	.x(function(d) {
-    		return xScale(d.minutes);
-    	})
-    	.y(function(d) {
-    		return yScale(d.people);
-    	})
+    	// .x(function(d) {
+    	// 	return xScale(d.year);
+    	// })
+    	// .y(function(d) {
+    	// 	return yScale(d.sale);
+    	// })
     	.interpolate("basis");
 
+    	vis.append('svg:path')
+    	.attr('d', lineGen(data))
+    	.attr('stroke', 'green')
+    	.attr('stroke-width', 2)
+    	.attr('fill', 'none');
 
-  		vis.append('svg:path')
-  			.attr('d', lineGen(yas))
-  			.attr('stroke', 'green')
-  			.attr('stroke-width', 3)
-  			.attr('fill', 'none');
-  		console.log("drawing?")	
-  		
-  		vis.append('svg:path')
-  			.attr('d', lineGen(nas))
-  			.attr('stroke', 'blue')
-  			.attr('stroke-width', 2)
-  			.attr('fill', 'none');
+  		// vis.append('svg:path')
+  		// 	.attr('d', lineGen(nas))
+  		// 	.attr('stroke', 'blue')
+  		// 	.attr('stroke-width', 2)
+  		// 	.attr('fill', 'none');
 
-   		vis.append('svg:path')
-  			.attr('d', lineGen(poos))
-  			.attr('stroke', 'red')
-  			.attr('stroke-width', 2)
-  			.attr('fill', 'none');
+   	// 	vis.append('svg:path')
+  		// 	.attr('d', lineGen(poos))
+  		// 	.attr('stroke', 'red')
+  		// 	.attr('stroke-width', 2)
+  		// 	.attr('fill', 'none');
 
-   		vis.append('svg:path')
-  			.attr('d', lineGen(whatthefucks))
-  			.attr('stroke', 'yellow')
-  			.attr('stroke-width', 2)
-  			.attr('fill', 'none');
+   	// 	vis.append('svg:path')
+  		// 	.attr('d', lineGen(whatthefucks))
+  		// 	.attr('stroke', 'yellow')
+  		// 	.attr('stroke-width', 2)
+  		// 	.attr('fill', 'none');
 
-  		vis.append('svg:path')
-  			.attr('d', lineGen(uhhhhs))
-  			.attr('stroke', 'orange')
-  			.attr('stroke-width', 2)
-  			.attr('fill', 'none');
+  		// vis.append('svg:path')
+  		// 	.attr('d', lineGen(uhhhhs))
+  		// 	.attr('stroke', 'orange')
+  		// 	.attr('stroke-width', 2)
+  		// 	.attr('fill', 'none');
 
 	}
 	InitChart();
