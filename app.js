@@ -116,7 +116,7 @@ io.on('connection', function(socket) {
         var wtfs = rooms[roomId].sentiments.wtf.length;
         var uhs = rooms[roomId].sentiments.uh.length;
 
-        var data = yays + "," + nays + "," + poops + "," + wtfs + "," + uhs;
+        // var data = yays + "," + nays + "," + poops + "," + wtfs + "," + uhs;
 
         console.log(yays, nays, poops, wtfs, uhs);
 

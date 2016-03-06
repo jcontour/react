@@ -89,13 +89,3 @@ h1{
 	width: 100%;
 	margin: 10px 0px;
 }
-
-.axis path {
-    fill: none;
-    stroke: #777;
-    shape-rendering: crispEdges;
-}
-.axis text {
-    font-family: Lato;
-    font-size: 13px;
-}

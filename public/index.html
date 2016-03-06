@@ -10,6 +10,18 @@
 	<link rel="stylesheet" href="css/style.css">
 
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	
+	<style>
+        .axis path {
+            fill: none;
+            stroke: #777;
+            shape-rendering: crispEdges;
+        }
+        .axis text {
+            font-family: Lato;
+            font-size: 13px;
+        }
+    </style>
 
 </head>
 <body>
@@ -73,7 +85,7 @@
 
 	<!-- Graph -->
 	<script id="tpl-graph" type="text/html">
-		<% console.log(data) %>
+<!-- 		<% console.log(data) %> -->
 		<ul id="graph">
 			<li id="yay"> YAY: <%= data["yay"].length %> </li>
 			<li id="nay"> NAY: <%= data["nay"].length %> </li>
@@ -82,22 +94,28 @@
 			<li id="uh"> UH:  <%= data["uh"].length %> </li>
 		</ul>
 
-		<div>
 		<svg id="visualisation" width="500" height="350"></svg>
-		</div>
 
 	<script>
+
 	function InitChart() {
 
-		<% console.log(data) %>
+		var yas = [
+			<%= data["yay"].length %>
+			];
+		console.log ("is yay working?");
 
-		var yays = <%= data["yay"].length %>
-		var nays = <%= data["nay"].length %>
-		var poops = <%= data["poop"].length %>
-		var wtfs = <%= data["wtf"].length %>
-		var uhs = <%= data["uh"].length %>
+		var nas = d3.select("#nay");
+		var poos = d3.select("#poos");
+		var whatthefucks = d3.select("#whatthefucks");
+		var uhhhhs = d3.select("#uhhhhs");
 
-		<% console.log() %>
+
+		// var nas = <% data["nay"].length %>
+		// var poos = <% data["poop"].length %>
+		// var whatthefucks = <% data["wtf"].length %>
+		// var uhhhhs = <% data["uh"].length %>
+
 
 		var vis = d3.select("#visualisation"),
     	WIDTH = 400,
@@ -120,10 +138,6 @@
     	.scale(yScale)
     	.orient("left");
 
-
-
-    	
-
     	vis.append("svg:g")
     	.attr("class", "x axis")
     	.attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
@@ -136,40 +150,41 @@
 
     	var lineGen = d3.svg.line()
     	.x(function(d) {
-    		return xScale(d.year);
+    		return xScale(d.minutes);
     	})
     	.y(function(d) {
-    		return yScale(d.sale);
+    		return yScale(d.people);
     	})
     	.interpolate("basis");
 
 
   		vis.append('svg:path')
-  			.attr('d', lineGen(yays))
+  			.attr('d', lineGen(yas))
   			.attr('stroke', 'green')
-  			.attr('stroke-width', 2)
+  			.attr('stroke-width', 3)
   			.attr('fill', 'none');
+  		console.log("drawing?")	
   		
   		vis.append('svg:path')
-  			.attr('d', lineGen(nays))
+  			.attr('d', lineGen(nas))
   			.attr('stroke', 'blue')
   			.attr('stroke-width', 2)
   			.attr('fill', 'none');
 
    		vis.append('svg:path')
-  			.attr('d', lineGen(poops))
+  			.attr('d', lineGen(poos))
   			.attr('stroke', 'red')
   			.attr('stroke-width', 2)
   			.attr('fill', 'none');
 
    		vis.append('svg:path')
-  			.attr('d', lineGen(wtfs))
+  			.attr('d', lineGen(whatthefucks))
   			.attr('stroke', 'yellow')
   			.attr('stroke-width', 2)
   			.attr('fill', 'none');
 
   		vis.append('svg:path')
-  			.attr('d', lineGen(uhs))
+  			.attr('d', lineGen(uhhhhs))
   			.attr('stroke', 'orange')
   			.attr('stroke-width', 2)
   			.attr('fill', 'none');
