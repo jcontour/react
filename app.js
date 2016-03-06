@@ -1,15 +1,3 @@
-// Hello.
-//
-// This is JSHint, a tool that helps to detect errors and potential
-// problems in your JavaScript code.
-//
-// To start, simply enter some JavaScript anywhere on this page. Your
-// report will appear on the right side.
-//
-// Additionally, you can toggle specific options in the Configure
-// menu.
-
-/*---------- BASIC SETUP ----------*/
 var express     = require('express'),
     bodyParser  = require('body-parser');   // helper for parsing HTTP requests
 var app = express();                        // our Express app
@@ -47,7 +35,7 @@ server.listen(PORT, function(){
 });
 
 var rooms = {};
-var user = {}
+var user = {};
 // var users = []
 
 /*-------------- APP --------------*/
@@ -75,7 +63,7 @@ io.on('connection', function(socket) {
         console.log(user);
         // users.push(user);
         // console.log(users);
-    })
+    });
 
     // when user creates a new room
     socket.on('create-room', function(roomName){
@@ -128,6 +116,8 @@ io.on('connection', function(socket) {
         var wtfs = rooms[roomId].sentiments.wtf.length;
         var uhs = rooms[roomId].sentiments.uh.length;
 
+        var data = yays + "," + nays + "," + poops + "," + wtfs + "," + uhs;
+
         console.log(yays, nays, poops, wtfs, uhs);
 
         // When the server receives a “message” type signal from the client   
@@ -151,9 +141,9 @@ io.on('connection', function(socket) {
 
     //leaving a room
     socket.on('exit-room', function(){
-        console.log('left room')
+        console.log('left room');
         leaveAllRooms(socket);
-    })
+    });
 
     // Disconnecting
     socket.on('disconnect', function() {

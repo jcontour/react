@@ -73,7 +73,7 @@
 
 	<!-- Graph -->
 	<script id="tpl-graph" type="text/html">
-		<!-- <% console.log(data) %> -->
+		<% console.log(data) %>
 		<ul id="graph">
 			<li id="yay"> YAY: <%= data["yay"].length %> </li>
 			<li id="nay"> NAY: <%= data["nay"].length %> </li>
@@ -83,75 +83,100 @@
 		</ul>
 
 		<div>
-		<svg id="visualisation" width="1000" height="500"></svg>
+		<svg id="visualisation" width="500" height="350"></svg>
 		</div>
 
 	<script>
+	function InitChart() {
 
-var data = [{
-    #js-btn-send-yay
-}, {
-    
-}, {
-    
-}, {
-    
-}, {
-    
-}];
+		<% console.log(data) %>
 
-var vis = d3.select("#visualisation"),
-    WIDTH = 400,
-    HEIGHT = 250,
-    MARGINS = {
-        top: 20,
-        right: 20,
-        bottom: 20,
-        left: 50
-    },
+		var yays = <%= data["yay"].length %>
+		var nays = <%= data["nay"].length %>
+		var poops = <%= data["poop"].length %>
+		var wtfs = <%= data["wtf"].length %>
+		var uhs = <%= data["uh"].length %>
 
-    xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([0, 180]),
+		<% console.log() %>
 
-    yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([134,215]),
+		var vis = d3.select("#visualisation"),
+    	WIDTH = 400,
+    	HEIGHT = 250,
+   		MARGINS = {
+        	top: 20,
+        	right: 20,
+        	bottom: 20,
+        	left: 50
+    	},
 
-    xAxis = d3.svg.axis()
+    	xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([0, 240]),
+
+    	yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0,5]),
+
+    	xAxis = d3.svg.axis()
     	.scale(xScale),
-  
-  	yAxis = d3.svg.axis()
+
+    	yAxis = d3.svg.axis()
     	.scale(yScale)
     	.orient("left");
 
-    vis.append("svg:g")
-    .attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
-    .call(xAxis);
 
-	vis.append("svg:g")
+
+    	
+
+    	vis.append("svg:g")
+    	.attr("class", "x axis")
+    	.attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
+    	.call(xAxis);
+
+    	vis.append("svg:g")
+    	.attr("class", "y axis")
     	.attr("transform", "translate(" + (MARGINS.left) + ",0)")
     	.call(yAxis);
 
-var lineGen = d3.svg.line()
-  var lineGen = d3.svg.line()
-    .x(function(d) {
-        return xScale(d.year);
-    })
-    .y(function(d) {
-        return yScale(d.sale);
-    })
-    .interpolate("basis");
-
-  vis.append('svg:path')
-  .attr('d', lineGen(data))
-  .attr('stroke', 'green')
-  .attr('stroke-width', 2)
-  .attr('fill', 'none');
-
-// vis.append('svg:path')
-//   .attr('d', lineGen(data2))
-//   .attr('stroke', 'blue')
-//   .attr('stroke-width', 2)
-//   .attr('fill', 'none');
+    	var lineGen = d3.svg.line()
+    	.x(function(d) {
+    		return xScale(d.year);
+    	})
+    	.y(function(d) {
+    		return yScale(d.sale);
+    	})
+    	.interpolate("basis");
 
 
+  		vis.append('svg:path')
+  			.attr('d', lineGen(yays))
+  			.attr('stroke', 'green')
+  			.attr('stroke-width', 2)
+  			.attr('fill', 'none');
+  		
+  		vis.append('svg:path')
+  			.attr('d', lineGen(nays))
+  			.attr('stroke', 'blue')
+  			.attr('stroke-width', 2)
+  			.attr('fill', 'none');
+
+   		vis.append('svg:path')
+  			.attr('d', lineGen(poops))
+  			.attr('stroke', 'red')
+  			.attr('stroke-width', 2)
+  			.attr('fill', 'none');
+
+   		vis.append('svg:path')
+  			.attr('d', lineGen(wtfs))
+  			.attr('stroke', 'yellow')
+  			.attr('stroke-width', 2)
+  			.attr('fill', 'none');
+
+  		vis.append('svg:path')
+  			.attr('d', lineGen(uhs))
+  			.attr('stroke', 'orange')
+  			.attr('stroke-width', 2)
+  			.attr('fill', 'none');
+
+	}
+	InitChart();
+    
     </script>
 
 

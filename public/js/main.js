@@ -1,5 +1,3 @@
-/* Your code starts here */
-
 var app = app || {};
 
 app.main = (function() {
@@ -36,7 +34,7 @@ app.main = (function() {
 	    	console.log(res);
 	    	render('graph', '#graph', 'replace', res);
 	    });
-	}
+	};
 
     var hashRouter = function(){
 		$(window).off('hashchange').on('hashchange', function() {
@@ -52,14 +50,14 @@ app.main = (function() {
 	        	loadData(currentPage, roomId);
 	        }
 	    });
-	}
+	};
 
 	var getUserInfo = function(){
 		var age = prompt("How old are you?", "enter a number");
 		var party = prompt("What party do you support?", "Democrat, Republican, or Other?");
 		var city = prompt("What city do you live in?", " ");
 		socket.emit('user-info', { age : age, party : party, city : city });
-	}
+	};
 
 	var loadData = function(template, data){
 		console.log('Loading data for: ' + template);
@@ -118,12 +116,12 @@ app.main = (function() {
 		if(roomName.length > 0){
 			socket.emit('create-room', roomName);
 		}
-	}	
+	};	
 
 	var sendVote = function(msg){
     	console.log('sending ' + msg);
     	socket.emit('msg-to-server', msg);
-	}
+	};
 
 	var init = function(){	
 		console.log('Initializing app.');
