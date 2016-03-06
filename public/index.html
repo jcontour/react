@@ -100,19 +100,16 @@
 
 	function InitChart() {
 
-		// var yay = [<%= data["yay"].length %>];
-		// var nay = [<% data["nay"].length %>];
-		// var poop = [<% data["poop"].length %>];
-		// var wtf = [<% data["wtf"].length %>];
-		// var uh = [<% data["uh"].length %>];
-
-		
-		console.log ("is yay working?");
+		var yay = [<%= data["yay"].length %>];
+		var nay = [<% data["nay"].length %>];
+		var poop = [<% data["poop"].length %>];
+		var wtf = [<% data["wtf"].length %>];
+		var uh = [<% data["uh"].length %>];
 
 		var data = [
-			<%= data["yay"].length %>
-		, 
 			<% data["nay"].length %>
+		, 
+			<%= data["yay"].length %>
 		,
 			<%= data["poop"].length %>
 		,
@@ -121,7 +118,7 @@
 			<%= data["uh"].length %>
 		];
 
-
+		console.log (data);
 
 		var vis = d3.select("#visualisation"),
     	WIDTH = 400,
@@ -154,17 +151,17 @@
     	.call(yAxis);
 
     	var lineGen = d3.svg.line()
-    	// .x(function(d) {
-    	// 	return xScale(d.year);
-    	// })
-    	// .y(function(d) {
-    	// 	return yScale(d.sale);
-    	// })
+    	.x(function(d) {
+    		return xScale(d);
+    	})
+    	.y(function(d) {
+    		return yScale(d);
+    	})
     	.interpolate("basis");
 
     	vis.append('svg:path')
     	.attr('d', lineGen(data))
-    	.attr('stroke', 'green')
+    	.attr('stroke', 'blue')
     	.attr('stroke-width', 2)
     	.attr('fill', 'none');
 
