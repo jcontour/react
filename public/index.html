@@ -44,6 +44,7 @@
 					</a>
 					<div class="body-aux">
 						(<%= data[roomId].members %> users)
+						<%= console.log (data[roomId].members) %>
 					</div>
 				</div>
 			<% } %>
@@ -93,6 +94,7 @@
 			<li id="wtf"> WTF: <%= data["wtf"].length %> </li>
 			<li id="uh"> UH:  <%= data["uh"].length %> </li>
 		</ul>
+		<% console.log(data) %>
 
 		<svg id="visualisation" width="500" height="350"></svg>
 
@@ -100,21 +102,31 @@
 
 	function InitChart() {
 
-		var yay = [<%= data["yay"].length %>];
-		var nay = [<% data["nay"].length %>];
-		var poop = [<% data["poop"].length %>];
-		var wtf = [<% data["wtf"].length %>];
-		var uh = [<% data["uh"].length %>];
+		// var yay = <%= data["yay"].length %> ;
+		// var nay = <% data["nay"].length %> ;
+		// var poop = <% data["poop"].length %> ;
+		// var wtf = <% data["wtf"].length %> ;
+		// var uh = <% data["uh"].length %> ;
+
+		// console.log(yay, nay, poop, wtf, uh);
+
+		// var data = [
+		// 	yay
+		// ,
+		// 	nay
+		// ,
+		// 	poop
+		// ,
+		// 	wtf
+		// ,
+		// 	uh
+		// ];
 
 		var data = [
-			<% data["nay"].length %>
-		, 
-			<%= data["yay"].length %>
-		,
-			<%= data["poop"].length %>
-		,
-			<%= data["wtf"].length %> 
-		,
+			<%= data["yay"].length %> ,
+			<%= data["nay"].length %> ,
+			<%= data["poop"].length %> ,
+			<%= data["wtf"].length %> ,
 			<%= data["uh"].length %>
 		];
 
@@ -159,11 +171,20 @@
     	})
     	.interpolate("basis");
 
-    	vis.append('svg:path')
-    	.attr('d', lineGen(data))
-    	.attr('stroke', 'blue')
-    	.attr('stroke-width', 2)
-    	.attr('fill', 'none');
+		data.forEach(function(d, i) {
+    		vis.append('svg:path')
+        		.attr('d', lineGen(data))
+        		.attr('stroke', function(d, j) {
+            	return "hsl(" + Math.random() * 360 + ",100%,50%)";
+        	})
+        		.attr('stroke-width', 2)
+        		.attr('fill', 'none');
+		});
+    	// vis.append('svg:path')
+    	// .attr('d', lineGen(data))
+    	// .attr('stroke', 'blue')
+    	// .attr('stroke-width', 2)
+    	// .attr('fill', 'none');
 
   		// vis.append('svg:path')
   		// 	.attr('d', lineGen(nas))

@@ -132,8 +132,6 @@ app.main = (function() {
 
 	};
 
-
-
 	return {
 		init: init
 	};

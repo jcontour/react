@@ -124,7 +124,7 @@ io.on('connection', function(socket) {
         console.log('A client is speaking to me! They’re saying: ' + msg);
                 // var saveCurrTime = 5; 
                  //does stuff on a timer running every 5 seconds of every minute
-                new CronJob('*/15 * * * * *', function(){ //six parameters // sec min (24)hour day month dayoftheweek
+                new CronJob('*/5 * * * * *', function(){ //six parameters // sec min (24)hour day month dayoftheweek
                 // * * * * * *
 
                 var totalCurrTime = yays + nays + poops + wtfs + uhs;
@@ -132,11 +132,14 @@ io.on('connection', function(socket) {
 
                 io.emit(totalCurrTime);   
              //  io.emit("TOTAL SENTIMENTS: "+totalCurrTime + saveCurrTime);  
-               console.log("TOTAL SENTIMENTS: "+ totalCurrTime); 
-            }, null, true, "msg-to-server"); 
+                console.log(totalCurrTime);
 
-        //emit new sentiment values
-        io.to(roomId).emit('update-graph', rooms[roomId].sentiments );
+             //emit new sentiment values
+            io.to(roomId).emit('update-graph', rooms[roomId].sentiments, totalCurrTime);
+
+            console.log('update-graph', rooms[roomId].sentiments, totalCurrTime);
+
+            }, null, true, 'msg-to-server'); 
     });        
 
     //leaving a room
