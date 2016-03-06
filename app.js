@@ -124,7 +124,7 @@ io.on('connection', function(socket) {
         console.log('A client is speaking to me! They’re saying: ' + msg);
                 // var saveCurrTime = 5; 
                  //does stuff on a timer running every 5 seconds of every minute
-                new CronJob('*/1 * * * * *', function(){ //six parameters // sec min (24)hour day month dayoftheweek
+                new CronJob('*/2 * * * * *', function(){ //six parameters // sec min (24)hour day month dayoftheweek
                 // * * * * * *
 
                 var totalCurrTime = yays + nays + poops + wtfs + uhs;
