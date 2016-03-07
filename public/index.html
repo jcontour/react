@@ -102,6 +102,7 @@
 
 	function InitChart() {
 
+
 		// var yay = [<%= data["yay"].length %>] ;
 		// var nay = [<% data["nay"].length %>] ;
 		// var poop = [<% data["poop"].length %>] ;
@@ -126,7 +127,7 @@
 
 		console.log (data);
 
-		JSON.stringify(data);
+		// JSON.stringify(data);
 
 		var dataGroup = d3.nest()
     		.key(function(d) {
@@ -180,14 +181,14 @@
 
     	dataGroup.forEach(function(d, i) {
     		vis.append('svg:path')
-    		.attr('d', lineGen(d.values))
+    		.attr('d', lineGen(data))
     		.attr('stroke', function(d, j) {
     			return "hsl(" + Math.random() * 360 + ",100%,50%)";
     		})
     		.attr('stroke-width', 2)
     		.attr('fill', 'none');
 
-    		    	console.log(d.values);
+    		    	console.log(data);
     	});
 
 
