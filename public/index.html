@@ -146,7 +146,7 @@
         	left: 30
     	},
 
-    	xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([0, 120]),
+    	xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([0, 10]),
 
     	yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0, 10]),
 
@@ -187,7 +187,7 @@
     		.attr('stroke-width', 2)
     		.attr('fill', 'none');
 
-    		    	console.log(lineGen(data));
+    		    	console.log(d.values);
     	});
 
 
