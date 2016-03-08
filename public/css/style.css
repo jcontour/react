@@ -52,6 +52,11 @@ input, button{
 	outline: none;	
 }
 
+#vote-count li{
+	/*font-size: 3em;*/
+	list-style: none;
+}
+
 input{
 	width: calc(100% - 80px);
 }
@@ -60,6 +65,11 @@ button{
 	background: #333;
 	width: 80px;
 	color: #FFF;
+}
+
+#vote-inputs button{
+	font-size: 3em;
+	height: 75px;
 }
 
 .inactive{
@@ -98,4 +108,16 @@ h1{
 .chat-item {
 	width: 100%;
 	margin: 10px 0px;
+}
+
+
+/*d3 styling*/
+.axis path {
+	fill: none;
+	stroke: #777;
+	shape-rendering: crispEdges;
+}
+.axis text {
+    font-family: helvetica;
+    font-size: 14px;
 }

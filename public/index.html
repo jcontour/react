@@ -10,19 +10,6 @@
 	<link rel="stylesheet" href="css/style.css">
 
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	
-	<style>
-        .axis path {
-            fill: none;
-            stroke: #777;
-            shape-rendering: crispEdges;
-        }
-        .axis text {
-            font-family: helvetica;
-            font-size: 14px;
-        }
-    </style>
-
 </head>
 <body>
 
@@ -86,151 +73,15 @@
 
 	<!-- Graph -->
 	<script id="tpl-graph" type="text/html">
-<!-- 		<% console.log(data) %> -->
-		<ul id="graph">
+		<ul id="vote-count">
 			<li id="yay"> YAY: <%= data["yay"].length %> </li>
 			<li id="nay"> NAY: <%= data["nay"].length %> </li>
 			<li id="poop"> POOP: <%= data["poop"].length %> </li>
 			<li id="wtf"> WTF: <%= data["wtf"].length %> </li>
 			<li id="uh"> UH:  <%= data["uh"].length %> </li>
 		</ul>
-		<!-- % console.log(data) %> -->
 
-		<svg id="visualisation" width="500" height="300"></svg>
-
-	<script>
-
-	function InitChart() {
-
-
-		var yay = [<%= data["yay"].length %>] ;
-		var nay = [<% data["nay"].length %>] ;
-		var poop = [<% data["poop"].length %>] ;
-		var wtf = [<% data["wtf"].length %>] ;
-		var uh = [<% data["uh"].length %> ] ;
-
-		console.log(yay, nay, poop, wtf, uh);
-
-		var data = [
-			yay
-		,
-			nay
-		,
-			poop
-		,
-			wtf
-		,
-			uh
-		];
-
-		// var data = [ [ <%= data["yay"].length %>] , [<%= data["nay"].length %>] , [<%= data["poop"].length %>] , [<%= data["wtf"].length %>] , [<%= data["uh"].length %>] ];
-
-		console.log (data);
-
-		JSON.stringify(data);
-
-		// var dataGroup = d3.nest()
-  //   		.key(function(d) {
-  //       	return d.values;
-  //  		})
-  //   		.entries(data);
-
-    	// console.log(dataGroup);
-
-		var vis = d3.select("#visualisation"),
-    	WIDTH = 400,
-    	HEIGHT = 250,
-   		MARGINS = {
-        	top: 10,
-        	right: 10,
-        	bottom: 5,
-        	left: 30
-    	},
-
-    	xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([0, 10]),
-
-    	yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0, 20]),
-
-    	xAxis = d3.svg.axis()
-    	.scale(xScale),
-
-    	yAxis = d3.svg.axis()
-    	.scale(yScale)
-    	.orient("left");
-
-    	// lSpace = WIDTH/dataGroup.length;
-
-    	vis.append("svg:g")
-    	.attr("class", "x axis")
-    	.attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
-    	.call(xAxis);
-
-    	vis.append("svg:g")
-    	.attr("class", "y axis")
-    	.attr("transform", "translate(" + (MARGINS.left) + ",0)")
-    	.call(yAxis);
-
-    	var lineGen = d3.svg.line()
-
-    	.x(function(d) {
-    		return xScale(d);
-    	})
-    	.y(function(d) {
-    		return yScale(d);
-    	})
-    	.interpolate("basis");
-
-    	// dataGroup.forEach(function(d, i) {
-    	// 	vis.append('svg:path')
-    	// 	.attr('d', lineGen(d.values))
-    	// 	.attr('stroke', function(d, j) {
-    	// 		return "hsl(" + Math.random() * 360 + ",100%,50%)";
-    	// 	})
-    	// 	.attr('stroke-width', 3)
-    	// 	.attr('fill', 'none');
-
-    	// 	    	console.log(data);
-    	// });
-
-
-    	vis.append('svg:path')
-    	.attr('d', lineGen(data))
-    	.attr('stroke', 'blue')
-    	.attr('stroke-width', 2)
-    	.attr('fill', 'none');
-
-
-
-  		vis.append('svg:path')
-  			.attr('d', lineGen(data))
-  			.attr('stroke', 'green')
-  			.attr('stroke-width', 2)
-  			.attr('fill', 'none');
-
-   		vis.append('svg:path')
-  			.attr('d', lineGen(data))
-  			.attr('stroke', 'red')
-  			.attr('stroke-width', 2)
-  			.attr('fill', 'none');
-
-
-   		vis.append('svg:path')
-  			.attr('d', lineGen(data))
-  			.attr('stroke', 'yellow')
-  			.attr('stroke-width', 2)
-  			.attr('fill', 'none');
-
-  		vis.append('svg:path')
-  			.attr('d', lineGen(data))
-  			.attr('stroke', 'orange')
-  			.attr('stroke-width', 2)
-  			.attr('fill', 'none');
-
-	}
-	InitChart();
-    
-    </script>
-
+		<div id="chart-container"></div>
 
 	</script>
 

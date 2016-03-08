@@ -38,6 +38,7 @@ var rooms = {};
 var user = {};
 // var users = []
 
+
 /*-------------- APP --------------*/
 io.on('connection', function(socket) {
     /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
@@ -80,8 +81,11 @@ io.on('connection', function(socket) {
                 poop: [],
                 wtf: [],
                 uh: []
-            }
+            },
+            time: 0.0
         };
+
+        startCron(rooms[id]);
 
         console.log('New room ID: '+ id + ', Name: '+ rooms[id].name);
         socket.emit('room-list', {
@@ -110,37 +114,9 @@ io.on('connection', function(socket) {
             rooms[roomId]["sentiments"][msg].push(socket.id);   
         }
         
-        var yays = rooms[roomId].sentiments.yay.length;
-        var nays = rooms[roomId].sentiments.nay.length;
-        var poops = rooms[roomId].sentiments.poop.length;
-        var wtfs = rooms[roomId].sentiments.wtf.length;
-        var uhs = rooms[roomId].sentiments.uh.length;
+        io.to(roomId).emit('update-votes', rooms[roomId].sentiments);
 
-        // var data = yays + "," + nays + "," + poops + "," + wtfs + "," + uhs;
-
-        console.log(yays, nays, poops, wtfs, uhs);
-
-        // When the server receives a “message” type signal from the client   
-        console.log('A client is speaking to me! They’re saying: ' + msg);
-                // var saveCurrTime = 5; 
-                 //does stuff on a timer running every 5 seconds of every minute
-                new CronJob('*/3 * * * * *', function(){ //six parameters // sec min (24)hour day month dayoftheweek
-                // * * * * * *
-
-                var totalCurrTime = yays + nays + poops + wtfs + uhs;
-                // console.log("THE CURRENTIME: "+ saveCurrTime);
-
-                io.emit(totalCurrTime);   
-             //  io.emit("TOTAL SENTIMENTS: "+totalCurrTime + saveCurrTime);  
-                console.log(totalCurrTime);
-
-             //emit new sentiment values
-            io.to(roomId).emit('update-graph', rooms[roomId].sentiments, totalCurrTime);
-
-            console.log('update-graph', rooms[roomId].sentiments, totalCurrTime);
-
-            }, null, true, 'msg-to-server'); 
-    });        
+    });     
 
     //leaving a room
     socket.on('exit-room', function(){
@@ -156,6 +132,35 @@ io.on('connection', function(socket) {
 
     });
 });
+
+function startCron(room){
+    console.log("starting cron")
+
+    // create file
+    fs.writeFile('public/data/yay.csv', 'time,votes\n0,0\n', function(err) {
+        if (err) {
+           throw err;
+        };
+    });
+
+    new CronJob('*/2 * * * * *', function(){
+        room.time += .5;
+
+        dataPoint = room.time + "," + room['sentiments']['yay'].length;
+        dataPoint = dataPoint.toString() + '\n';
+
+        fs.appendFile('public/data/yay.csv', dataPoint, function(err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('Writing file Async: ' + dataPoint);
+            }
+        });
+
+        io.to(room).emit("update-chart");
+
+    }, null, true, 'UTC');   
+}
 
 function leaveAllRooms(socket){
     console.log('Called leaveAllRooms.');
