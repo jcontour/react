@@ -26,13 +26,14 @@ app.main = (function() {
 	    	// make with radio buttons and stuff. 
 	    	// getUserInfo();
 
-	    	render('graph', '#graph', 'replace', res.room.sentiments);
+	    	render('vote-count', '#vote-count', 'replace', res.room.sentiments);
+	    	render('graph', '#graph', 'replace')
 	    	initChart();
 	    });
 
 	    socket.on('update-votes', function(res){
 	    	console.log(res);
-	    	render('graph', '#graph', 'replace', res);
+	    	render('vote-count', '#vote-count', 'replace', res);
 	    });
 
 	    // 
@@ -138,6 +139,8 @@ app.main = (function() {
     	socket.emit('msg-to-server', msg);
 	};
 
+	var x, y, xAxis, yAxis, valueline;
+
 	var updateChart = function() {
 		// Get the data again
 	    d3.csv("data/yay.csv", function(error, data) {
@@ -147,8 +150,8 @@ app.main = (function() {
 		    });
 
 	    	// Scale the range of the data again 
-	    	x.domain(d3.extent(data + 5, function(d) { return d.time; }));
-		    y.domain([0, d3.max(data + 5, function(d) { return d.votes; })]);
+	    	x.domain(d3.extent(data, function(d) { return d.time; }));
+		    y.domain([0, d3.max(data, function(d) { return d.votes; })]);
 
 	    // Select the section we want to apply our changes to
 	    var svg = d3.select("#chart-container").transition();
@@ -173,19 +176,19 @@ app.main = (function() {
     		height = 300 - margin.top - margin.bottom;
 
     	// set ranges
-    	var x = d3.scale.linear().range([0, width]);
-		var y = d3.scale.linear().range([height, 0]);
+    	x = d3.scale.linear().range([0, width]);
+		y = d3.scale.linear().range([height, 0]);
 
 
 		// Define the axes
-		var xAxis = d3.svg.axis().scale(x)
+		xAxis = d3.svg.axis().scale(x)
 		    .orient("bottom").ticks(5);
 
-		var yAxis = d3.svg.axis().scale(y)
+		yAxis = d3.svg.axis().scale(y)
 		    .orient("left").ticks(5);
 
 		// Define the line
-		var valueline = d3.svg.line()
+		valueline = d3.svg.line()
 		    .x(function(d) { return x(d.time); })
 		    .y(function(d) { return y(d.votes); });
 
@@ -207,12 +210,15 @@ app.main = (function() {
 		    });
 
 		    // Scale the range of the data
-		    x.domain(d3.extent(data + 5, function(d) { return d.time; }));
-		    y.domain([0, d3.max(data + 5, function(d) { return d.votes; })]);
+		    x.domain(d3.extent(data, function(d) { return d.time; }));
+		    y.domain([0, d3.max(data, function(d) { return d.votes; })]);
 
 			// Add the valueline path.
 		    svg.append("path")
 		        .attr("class", "line")
+		        .attr('stroke', 'blue')
+		        .attr('stroke-width', 2)
+		        .attr('fill', 'none')
 		        .attr("d", valueline(data));
 
 		    // Add the X Axis

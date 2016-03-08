@@ -85,7 +85,7 @@ io.on('connection', function(socket) {
             time: 0.0
         };
 
-        startCron(rooms[id]);
+        startCron(id);
 
         console.log('New room ID: '+ id + ', Name: '+ rooms[id].name);
         socket.emit('room-list', {
@@ -133,7 +133,7 @@ io.on('connection', function(socket) {
     });
 });
 
-function startCron(room){
+function startCron(id){
     console.log("starting cron")
 
     // create file
@@ -144,9 +144,9 @@ function startCron(room){
     });
 
     new CronJob('*/2 * * * * *', function(){
-        room.time += .5;
+        rooms[id].time += .5;
 
-        dataPoint = room.time + "," + room['sentiments']['yay'].length;
+        dataPoint = rooms[id].time + "," + rooms[id]['sentiments']['yay'].length;
         dataPoint = dataPoint.toString() + '\n';
 
         fs.appendFile('public/data/yay.csv', dataPoint, function(err) {
@@ -157,7 +157,7 @@ function startCron(room){
             }
         });
 
-        io.to(room).emit("update-chart");
+        io.to(id).emit("update-chart");
 
     }, null, true, 'UTC');   
 }

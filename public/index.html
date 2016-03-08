@@ -58,6 +58,7 @@
 		</h1>
 		
 		<div class="reaction-container">
+			<div id="vote-count"> </div>
 			<div id="graph"> </div>
 		</div>
 
@@ -71,8 +72,8 @@
 
 	</script>
 
-	<!-- Graph -->
-	<script id="tpl-graph" type="text/html">
+	<!-- Vote counter -->
+	<script id="tpl-vote-count" type="text/html">
 		<ul id="vote-count">
 			<li id="yay"> YAY: <%= data["yay"].length %> </li>
 			<li id="nay"> NAY: <%= data["nay"].length %> </li>
@@ -80,9 +81,11 @@
 			<li id="wtf"> WTF: <%= data["wtf"].length %> </li>
 			<li id="uh"> UH:  <%= data["uh"].length %> </li>
 		</ul>
-
+	</script>
+	
+	<!-- Graph -->
+	<script id="tpl-graph" type="text/html">
 		<div id="chart-container"></div>
-
 	</script>
 
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
