@@ -137,8 +137,8 @@ io.on('connection', function(socket) {
 function startCron(id){
     console.log("starting cron")
 
-    // create file/ overwrite any existing data and start with 0,0
-    fs.writeFile('public/data/yay.csv', 'time,votes\n0,0\n', function(err) {
+    // create file/ overwrite any existing data and start with 0s
+    fs.writeFile('public/data/data.csv', 'time,votes\n0,0 0 0 0 0\n', function(err) {
         if (err) {
            throw err;
         };
@@ -150,12 +150,13 @@ function startCron(id){
         // incrememt time
         rooms[id].time += .5;
 
-        // create new data point with time/sentiment value
-        dataPoint = rooms[id].time + "," + rooms[id]['sentiments']['yay'].length;
+        // create new data point with time/array of vote values
+        dataPoint = rooms[id].time + "," + rooms[id]['sentiments']['yay'].length + " " + rooms[id]['sentiments']['nay'].length + " " + rooms[id]['sentiments']['poop'].length + " " + rooms[id]['sentiments']['wtf'].length + " " + rooms[id]['sentiments']['uh'].length; 
+
         dataPoint = dataPoint.toString() + '\n';
 
         // append to end of csv
-        fs.appendFile('public/data/yay.csv', dataPoint, function(err) {
+        fs.appendFile('public/data/data.csv', dataPoint, function(err) {
             if (err) {
                 console.log(err);
             } else {

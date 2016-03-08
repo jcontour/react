@@ -95,21 +95,10 @@ app.main = (function() {
       		createRoom();
       	});
 
-      	$('#js-btn-send-yay').off('click').on('click', function(){
-      		sendVote("yay");
+      	$('.js-btn-send-vote').off('click').on('click', function(){
+      		sendVote(this.id);
       	});
-      	$('#js-btn-send-nay').off('click').on('click', function(){
-      		sendVote("nay");
-      	});
-      	$('#js-btn-send-poop').off('click').on('click', function(){
-      		sendVote("poop");
-      	});
-      	$('#js-btn-send-wtf').off('click').on('click', function(){
-      		sendVote("wtf");
-      	});      	
-      	$('#js-btn-send-uh').off('click').on('click', function(){
-      		sendVote("uh");
-      	});
+      	
 
       	$('#js-btn-exit-room').off('click').on('click', function(){
       		console.log('exit room.');
@@ -120,7 +109,7 @@ app.main = (function() {
       	var buttons = $('button');
 		buttons.on('click', function() {
 			if ($(this).hasClass('active')){
-			  buttons.removeClass('active').addClass('inactive');
+			  // buttons.removeClass('active').addClass('inactive');
 			} else {
 			  buttons.removeClass('active').addClass('inactive');
 			  $(this).removeClass('inactive').addClass('active');
@@ -142,22 +131,40 @@ app.main = (function() {
 
 	var x, y, xAxis, yAxis, valueline;
 
-	var updateChart = function() {
+	var updateChart = function(vote) {
 		// Get the data again
-	    d3.csv("data/yay.csv", function(error, data) {
-	       	data.forEach(function(d) {
+	    d3.csv("data/data.csv", function(error, data) {
+		    data.forEach(function(d) {
+		    	var voteValues = d.votes.split(" ");
+		    	// parsing values
+		    	// + means it's a number
 		    	d.time = +d.time;
-		    	d.votes = +d.votes;
+		        d.yay = +voteValues[0];
+		        d.nay = +voteValues[1];
+		        d.poop = +voteValues[2];
+		        d.wtf = +voteValues[3];
+		        d.uh = +voteValues[4];
 		    });
 
 	    	// Scale the range of the data again 
 	    	x.domain(d3.extent(data, function(d) { return d.time; }));
-		    y.domain([0, d3.max(data, function(d) { return d.votes; })]);
+
+	    	// y is based on highest vote value in array
+
+		    // ------------------------------------------------------------------------------------------------------------------------------
+		    // need to fix dynamic scaling here too
+		    // ------------------------------------------------------------------------------------------------------------------------------
+
+		    // y.domain([0, d3.max(data, function(d) { return d.votes[0]; })]);
+		    y.domain([0, 5]);
 
 	    // Select the section we want to apply our changes to
 	    var svg = d3.select("#chart-container").transition();
 
 	    // Make the changes
+	    	// ------------------------------------------------------------------------------------------------------------------------------
+		    // need to add multiple line appending here too
+		    // ------------------------------------------------------------------------------------------------------------------------------
 	        svg.select(".line")   // change the line
 	            .duration(250)
 	            .attr("d", valueline(data));
@@ -203,26 +210,52 @@ app.main = (function() {
 		              "translate(" + margin.left + "," + margin.top + ")");
 
 		// Get the data
-		d3.csv("data/yay.csv", function(error, data) {
+		d3.csv("data/data.csv", function(error, data) {
 		    data.forEach(function(d) {
-		    	console.log(d.time, " ", d.votes)
-		    	// parsing values 
+		    	var voteValues = d.votes.split(" ");
+		    	// parsing values
 		    	// + means it's a number
-		        d.time = +d.time;
-		        d.votes = +d.votes;
+		    	d.time = +d.time;
+		        d.yay = +voteValues[0];
+		        d.nay = +voteValues[1];
+		        d.poop = +voteValues[2];
+		        d.wtf = +voteValues[3];
+		        d.uh = +voteValues[4];
 		    });
 
 		    // Scale the range of the data
 		    x.domain(d3.extent(data, function(d) { return d.time; }));
-		    y.domain([0, d3.max(data, function(d) { return d.votes; })]);
 
-			// Add the valueline path.
-		    svg.append("path")
-		        .attr("class", "line")
-		        .attr('stroke', 'blue')
-		        .attr('stroke-width', 2)
-		        .attr('fill', 'none')
-		        .attr("d", valueline(data));
+		    // console.log(d3.max(data, function(d) { return d.vote; }));
+
+		    // ------------------------------------------------------------------------------------------------------------------------------
+		    // can't figure out dynamic scaling of y axis based on multiple d values
+		    // ------------------------------------------------------------------------------------------------------------------------------
+
+
+		    // y.domain( [0, d3.max(data, function(d) { return d; }) ]);
+		    y.domain( [0, 5] );
+
+		  	// Add the valueline paths.
+			// yay
+		    // svg.append("path")
+		    //     .attr("class", "line")
+		    //     .attr('stroke', 'blue')
+		    //     .attr('stroke-width', 2)
+		    //     .attr('fill', 'none')
+		    //     .attr("d", valueline(data));
+
+		    // ------------------------------------------------------------------------------------------------------------------------------
+		    // NOT APPENDING MULTIPLE LINES CORRECTLY
+		    // ------------------------------------------------------------------------------------------------------------------------------
+
+		    data.forEach(function(d, i) {
+			    svg.append('path')
+			        .attr('d', valueline(d))
+			        .attr('stroke', 'blue')
+			        .attr('stroke-width', 2)
+			        .attr('fill', 'none');
+			});
 
 		    // Add the X Axis
 		    svg.append("g")
