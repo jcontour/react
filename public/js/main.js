@@ -26,6 +26,8 @@ app.main = (function() {
 	    	// make with radio buttons and stuff. 
 	    	// getUserInfo();
 
+	    	// rendering chart and initing graph
+	    	// separate templates now so we can see vote count change independent of cron updating graph
 	    	render('vote-count', '#vote-count', 'replace', res.room.sentiments);
 	    	render('graph', '#graph', 'replace')
 	    	initChart();
@@ -36,7 +38,6 @@ app.main = (function() {
 	    	render('vote-count', '#vote-count', 'replace', res);
 	    });
 
-	    // 
 	    socket.on('update-chart', function(){
 	    	updateChart();
 	    	console.log("updating...");
@@ -205,6 +206,8 @@ app.main = (function() {
 		d3.csv("data/yay.csv", function(error, data) {
 		    data.forEach(function(d) {
 		    	console.log(d.time, " ", d.votes)
+		    	// parsing values 
+		    	// + means it's a number
 		        d.time = +d.time;
 		        d.votes = +d.votes;
 		    });

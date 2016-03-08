@@ -85,6 +85,7 @@ io.on('connection', function(socket) {
             time: 0.0
         };
 
+        // use room id to have different cron for each room
         startCron(id);
 
         console.log('New room ID: '+ id + ', Name: '+ rooms[id].name);
@@ -136,19 +137,24 @@ io.on('connection', function(socket) {
 function startCron(id){
     console.log("starting cron")
 
-    // create file
+    // create file/ overwrite any existing data and start with 0,0
     fs.writeFile('public/data/yay.csv', 'time,votes\n0,0\n', function(err) {
         if (err) {
            throw err;
         };
     });
 
+
     new CronJob('*/2 * * * * *', function(){
+
+        // incrememt time
         rooms[id].time += .5;
 
+        // create new data point with time/sentiment value
         dataPoint = rooms[id].time + "," + rooms[id]['sentiments']['yay'].length;
         dataPoint = dataPoint.toString() + '\n';
 
+        // append to end of csv
         fs.appendFile('public/data/yay.csv', dataPoint, function(err) {
             if (err) {
                 console.log(err);
