@@ -135,15 +135,14 @@ app.main = (function() {
 		// Get the data again
 	    d3.csv("data/data.csv", function(error, data) {
 		    data.forEach(function(d) {
-		    	var voteValues = d.votes.split(" ");
 		    	// parsing values
 		    	// + means it's a number
 		    	d.time = +d.time;
-		        d.yay = +voteValues[0];
-		        d.nay = +voteValues[1];
-		        d.poop = +voteValues[2];
-		        d.wtf = +voteValues[3];
-		        d.uh = +voteValues[4];
+		        d.yay = +d.yay;
+		        d.nay = +d.nay;
+		        d.poop = +d.poop;
+		        d.wtf = +d.wtf;
+		        d.uh = +d.uh;
 		    });
 
 	    	// Scale the range of the data again 
@@ -231,7 +230,6 @@ app.main = (function() {
 		    // ------------------------------------------------------------------------------------------------------------------------------
 		    // can't figure out dynamic scaling of y axis based on multiple d values
 		    // ------------------------------------------------------------------------------------------------------------------------------
-
 
 		    // y.domain( [0, d3.max(data, function(d) { return d; }) ]);
 		    y.domain( [0, 5] );

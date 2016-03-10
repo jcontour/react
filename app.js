@@ -138,7 +138,8 @@ function startCron(id){
     console.log("starting cron")
 
     // create file/ overwrite any existing data and start with 0s
-    fs.writeFile('public/data/data.csv', 'time,votes\n0,0 0 0 0 0\n', function(err) {
+    fs.writeFile('public/data/data.csv', 'time,yay,nay,poop,wtf,uh\n0,0,0,0,0,0\n', function(err) {
+    // fs.writeFile('public/data/data_' + id + '.csv', 'time,votes\n0,0 0 0 0 0\n', function(err) {
         if (err) {
            throw err;
         };
@@ -151,7 +152,7 @@ function startCron(id){
         rooms[id].time += .5;
 
         // create new data point with time/array of vote values
-        dataPoint = rooms[id].time + "," + rooms[id]['sentiments']['yay'].length + " " + rooms[id]['sentiments']['nay'].length + " " + rooms[id]['sentiments']['poop'].length + " " + rooms[id]['sentiments']['wtf'].length + " " + rooms[id]['sentiments']['uh'].length; 
+        dataPoint = rooms[id].time + "," + rooms[id]['sentiments']['yay'].length + "," + rooms[id]['sentiments']['nay'].length + "," + rooms[id]['sentiments']['poop'].length + "," + rooms[id]['sentiments']['wtf'].length + "," + rooms[id]['sentiments']['uh'].length; 
 
         dataPoint = dataPoint.toString() + '\n';
 
