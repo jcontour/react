@@ -211,7 +211,7 @@ app.main = (function() {
     		.y(function(d) { return y(d.sentiment); })
     		;
 
-		// Adds the svg canvas
+		// Adds the svg to canvas
 		var svg = d3.select("#chart-container")
 		    .append("svg")
 		        .attr("width", width + margin.left + margin.right)
@@ -231,11 +231,12 @@ app.main = (function() {
 		    	color.domain(d3.keys(data[0]).filter(function(key) { return key !== "time"; }));
 		    });
 
-		    var votes = color.domain().map(function(name) {		//mapping the value of individual votes
-				return {
-					name: name,		// setting sentiment name
-					values: data.map(function(d) {
-						return {time: +d.time, sentiment: +d[name]};  //coordinate points x = time, y = sentiment
+		    var votes = color.domain()
+		    				.map(function(name) {		//mapping the value of individual votes
+								return {
+									name: name,		// setting sentiment name
+									values: data.map(function(d) {
+								return {time: +d.time, sentiment: +d[name]};  //coordinate points x = time, y = sentiment
 					})
 				};
 			});
@@ -264,15 +265,17 @@ app.main = (function() {
 			// create vote gs		        
 		    var vote = svg.selectAll(".vote")
 				.data(votes)
-				.enter().append("g")
+				.enter()
+				.append("g")
 				.attr("class", "vote")
 				;
 
 			// append lines
-			vote.append("path")
+			vote.append("svg:path")
 				.attr("class", "line")
 				.attr("d", function(d) { return line(d.values); }) 		//get values from votes map function
 				.style("stroke", function(d) { return color(d.name); })
+				.attr("fill", "none")
 				;
 
 			vote.append("text")		// add text labels
