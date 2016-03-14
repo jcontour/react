@@ -129,50 +129,60 @@ app.main = (function() {
     	socket.emit('msg-to-server', msg);
 	};
 
-	var x, y, xAxis, yAxis, valueline;
+	var x, y, xAxis, yAxis, line;
 
 	var updateChart = function(vote) {
+
+		var color = d3.scale.category10();
+
 		// Get the data again
-	    d3.csv("data/data.csv", function(error, data) {
+		d3.csv("data/data.csv", function(error, data) {
 		    data.forEach(function(d) {
-		    	// parsing values
-		    	// + means it's a number
+		    	// parsing values // + means it's a number
 		    	d.time = +d.time;
-		        d.yay = +d.yay;
-		        d.nay = +d.nay;
-		        d.poop = +d.poop;
-		        d.wtf = +d.wtf;
-		        d.uh = +d.uh;
+		    	color.domain(d3.keys(data[0]).filter(function(key) { return key !== "time"; }));	//mapping all values except time
 		    });
 
-	    	// Scale the range of the data again 
-	    	x.domain(d3.extent(data, function(d) { return d.time; }));
+		    var votes = color.domain().map(function(name) {		//mapping the value of individual votes
+				return {
+					name: name,
+					values: data.map(function(d) {
+						return {time: +d.time, sentiment: +d[name]};
+					})
+				};
+			});
 
-	    	// y is based on highest vote value in array
+		    // Scale the range of the data
+		    x.domain(d3.extent(data, function(d) { return d.time; }));
 
-		    // ------------------------------------------------------------------------------------------------------------------------------
-		    // need to fix dynamic scaling here too
-		    // ------------------------------------------------------------------------------------------------------------------------------
+			y.domain([
+				d3.min(votes, function(c) { return d3.min(c.values, function(v) { return v.sentiment; }); }),
+				d3.max(votes, function(c) { return d3.max(c.values, function(v) { return v.sentiment; }); })
+			]);
 
-		    // y.domain([0, d3.max(data, function(d) { return d.votes[0]; })]);
-		    y.domain([0, 5]);
+			// Select the section we want to apply our changes to
+			var svg = d3.select("#chart-container").transition();
 
-	    // Select the section we want to apply our changes to
-	    var svg = d3.select("#chart-container").transition();
+			svg.select('.vote')
+				.duration(100)
+				.attr("d", function(d) { return line(d.values); }) 		//get values from votes map function
+				;
 
-	    // Make the changes
-	    	// ------------------------------------------------------------------------------------------------------------------------------
-		    // need to add multiple line appending here too
-		    // ------------------------------------------------------------------------------------------------------------------------------
-	        svg.select(".line")   // change the line
-	            .duration(250)
-	            .attr("d", valueline(data));
-	        svg.select(".x.axis") 
-	            .duration(250)
-	            .call(xAxis);
-	        svg.select(".y.axis") 
-	            .duration(250)
-	            .call(yAxis);
+
+			svg.select('.text')
+				.duration(100)
+				.attr("transform", function(d) { return "translate(" + x(d.value.time) + "," + y(d.value.sentiment) + ")"; })
+				;
+
+			svg.select(".x.axis") // change the x axis
+	            .duration(100)
+	            .call(xAxis)
+	            ;
+	        svg.select(".y.axis") // change the y axis
+	            .duration(100)
+	            .call(yAxis)
+	            ;
+
 	    });
 	}
 
@@ -195,9 +205,11 @@ app.main = (function() {
 		    .orient("left").ticks(5);
 
 		// Define the line
-		valueline = d3.svg.line()
-		    .x(function(d) { return x(d.time); })
-		    .y(function(d) { return y(d.votes); });
+		line = d3.svg.line()
+    		.interpolate("basis")
+    		.x(function(d) { return x(d.time); })
+    		.y(function(d) { return y(d.sentiment); })
+    		;
 
 		// Adds the svg canvas
 		var svg = d3.select("#chart-container")
@@ -206,65 +218,72 @@ app.main = (function() {
 		        .attr("height", height + margin.top + margin.bottom)
 		    .append("g")
 		        .attr("transform", 
-		              "translate(" + margin.left + "," + margin.top + ")");
+		              "translate(" + margin.left + "," + margin.top + ")")
+		        ;
+
+		var color = d3.scale.category10();
 
 		// Get the data
 		d3.csv("data/data.csv", function(error, data) {
 		    data.forEach(function(d) {
-		    	var voteValues = d.votes.split(" ");
-		    	// parsing values
-		    	// + means it's a number
+		    	// parsing values // + means it's a number
 		    	d.time = +d.time;
-		        d.yay = +voteValues[0];
-		        d.nay = +voteValues[1];
-		        d.poop = +voteValues[2];
-		        d.wtf = +voteValues[3];
-		        d.uh = +voteValues[4];
+		    	color.domain(d3.keys(data[0]).filter(function(key) { return key !== "time"; }));
 		    });
 
-		    // Scale the range of the data
-		    x.domain(d3.extent(data, function(d) { return d.time; }));
-
-		    // console.log(d3.max(data, function(d) { return d.vote; }));
-
-		    // ------------------------------------------------------------------------------------------------------------------------------
-		    // can't figure out dynamic scaling of y axis based on multiple d values
-		    // ------------------------------------------------------------------------------------------------------------------------------
-
-		    // y.domain( [0, d3.max(data, function(d) { return d; }) ]);
-		    y.domain( [0, 5] );
-
-		  	// Add the valueline paths.
-			// yay
-		    // svg.append("path")
-		    //     .attr("class", "line")
-		    //     .attr('stroke', 'blue')
-		    //     .attr('stroke-width', 2)
-		    //     .attr('fill', 'none')
-		    //     .attr("d", valueline(data));
-
-		    // ------------------------------------------------------------------------------------------------------------------------------
-		    // NOT APPENDING MULTIPLE LINES CORRECTLY
-		    // ------------------------------------------------------------------------------------------------------------------------------
-
-		    data.forEach(function(d, i) {
-			    svg.append('path')
-			        .attr('d', valueline(d))
-			        .attr('stroke', 'blue')
-			        .attr('stroke-width', 2)
-			        .attr('fill', 'none');
+		    var votes = color.domain().map(function(name) {		//mapping the value of individual votes
+				return {
+					name: name,		// setting sentiment name
+					values: data.map(function(d) {
+						return {time: +d.time, sentiment: +d[name]};  //coordinate points x = time, y = sentiment
+					})
+				};
 			});
+
+		    // Scale the range of the data
+		    x.domain(d3.extent(data, function(d) { return d.time; }));	// scale based on time value 
+
+			y.domain([		// scale based on max/min value of sentiments
+				d3.min(votes, function(c) { return d3.min(c.values, function(v) { return v.sentiment; }); }),
+				d3.max(votes, function(c) { return d3.max(c.values, function(v) { return v.sentiment; }); })
+			]);
 
 		    // Add the X Axis
 		    svg.append("g")
 		        .attr("class", "x axis")
 		        .attr("transform", "translate(0," + height + ")")
-		        .call(xAxis);
+		        .call(xAxis)
+		        ;
 
 		    // Add the Y Axis
 		    svg.append("g")
 		        .attr("class", "y axis")
-		        .call(yAxis);    
+		        .call(yAxis)
+		        ;
+		        
+			// create vote gs		        
+		    var vote = svg.selectAll(".vote")
+				.data(votes)
+				.enter().append("g")
+				.attr("class", "vote")
+				;
+
+			// append lines
+			vote.append("path")
+				.attr("class", "line")
+				.attr("d", function(d) { return line(d.values); }) 		//get values from votes map function
+				.style("stroke", function(d) { return color(d.name); })
+				;
+
+			vote.append("text")		// add text labels
+				.attr('class', 'text')
+				.datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+				.attr("transform", function(d) { return "translate(" + x(d.value.time) + "," + y(d.value.sentiment) + ")"; })
+				.attr("x", 3)
+				.attr("dy", ".35em")
+				.text(function(d) { return d.name; })
+				;
+   
 		});
     }
 
