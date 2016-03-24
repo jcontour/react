@@ -30,7 +30,7 @@ app.main = (function() {
 	    	// separate templates now so we can see vote count change independent of cron updating graph
 	    	render('vote-count', '#vote-count', 'replace', res.room.sentiments);
 	    	render('graph', '#graph', 'replace')
-	    	initChart();
+	    	drawChart(true);
 	    });
 
 	    socket.on('update-votes', function(res){
@@ -39,7 +39,7 @@ app.main = (function() {
 	    });
 
 	    socket.on('update-chart', function(){
-	    	updateChart();
+	    	drawChart(false);
 	    	console.log("updating...");
 	    })
 	};
@@ -131,7 +131,7 @@ app.main = (function() {
 
 	var x, y, xAxis, yAxis, line;
 
-	var updateChart = function(vote) {
+	var updateChart = function() {
 
 		var color = d3.scale.category10();
 
@@ -156,16 +156,16 @@ app.main = (function() {
 		    x.domain(d3.extent(data, function(d) { return d.time; }));
 
 			y.domain([
-				d3.min(votes, function(c) { return d3.min(c.values, function(v) { return v.sentiment; }); }),
+				0,
 				d3.max(votes, function(c) { return d3.max(c.values, function(v) { return v.sentiment; }); })
 			]);
 
 			// Select the section we want to apply our changes to
 			var svg = d3.select("#chart-container").transition();
 
-			svg.select('.vote')
+			svg.select('.line')
 				.duration(100)
-				.attr("d", function(d) { return line(d.values); }) 		//get values from votes map function
+				.attr("d", function(d, i) { return line(d.values); }) 		//get values from votes map function
 				;
 
 
@@ -182,11 +182,11 @@ app.main = (function() {
 	            .duration(100)
 	            .call(yAxis)
 	            ;
-
 	    });
 	}
 
-	var initChart = function() {
+	var drawChart = function( initialize ) {
+		$('#chart-container').empty()
 
 		var margin = {top: 30, right: 20, bottom: 30, left: 50},
     		width = 450 - margin.left - margin.right,
@@ -245,49 +245,53 @@ app.main = (function() {
 		    x.domain(d3.extent(data, function(d) { return d.time; }));	// scale based on time value 
 
 			y.domain([		// scale based on max/min value of sentiments
-				d3.min(votes, function(c) { return d3.min(c.values, function(v) { return v.sentiment; }); }),
+				0,
 				d3.max(votes, function(c) { return d3.max(c.values, function(v) { return v.sentiment; }); })
 			]);
 
-		    // Add the X Axis
-		    svg.append("g")
-		        .attr("class", "x axis")
-		        .attr("transform", "translate(0," + height + ")")
-		        .call(xAxis)
-		        ;
+			// if ( initialize ) {
+			    // Add the X Axis
+			    svg.append("g")
+			        .attr("class", "x axis")
+			        .attr("transform", "translate(0," + height + ")")
+			        .call(xAxis)
+			        ;
 
-		    // Add the Y Axis
-		    svg.append("g")
-		        .attr("class", "y axis")
-		        .call(yAxis)
-		        ;
-		        
-			// create vote gs		        
-		    var vote = svg.selectAll(".vote")
-				.data(votes)
-				.enter()
-				.append("g")
-				.attr("class", "vote")
-				;
+			    // Add the Y Axis
+			    svg.append("g")
+			        .attr("class", "y axis")
+			        .call(yAxis)
+			        ;
+			        
+				// create vote gs		        
+			    var vote = svg.selectAll(".vote")
+					.data(votes)
+					.enter()
+					.append("g")
+					.attr("class", "vote")
+					;
 
-			// append lines
-			vote.append("svg:path")
-				.attr("class", "line")
-				.attr("d", function(d) { return line(d.values); }) 		//get values from votes map function
-				.style("stroke", function(d) { return color(d.name); })
-				.attr("fill", "none")
-				;
+				// append lines
+				vote.append("svg:path")
+					.attr("class", "line")
+					.attr("d", function(d) { return line(d.values); }) 		//get values from votes map function
+					.style("stroke", function(d) { return color(d.name); })
+					.attr("fill", "none")
+					;
 
-			vote.append("text")		// add text labels
-				.attr('class', 'text')
-				.datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-				.attr("transform", function(d) { return "translate(" + x(d.value.time) + "," + y(d.value.sentiment) + ")"; })
-				.attr("x", 3)
-				.attr("dy", ".35em")
-				.text(function(d) { return d.name; })
-				;
-   
-		});
+				vote.append("text")		// add text labels
+					.attr('class', 'text')
+					.datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+					.attr("transform", function(d) { return "translate(" + x(d.value.time) + "," + y(d.value.sentiment) + ")"; })
+					.attr("x", 3)
+					.attr("dy", ".35em")
+					.text(function(d) { return d.name; })
+					;
+	   
+			// } else { 	// updating
+			// }
+
+		});	
     }
 
 	var init = function(){	
