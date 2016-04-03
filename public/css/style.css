@@ -123,6 +123,15 @@ h1{
 .room-item {
 	font-size: 34px;
 	padding: 20px 0;
+	position: relative;
+}
+
+.js-btn-close-room {
+	font-size: 14px;
+	position: absolute;
+	right: 0;
+	top: 0;
+	cursor: pointer;
 }
 
 .list-container {

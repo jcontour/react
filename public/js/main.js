@@ -38,8 +38,8 @@ app.main = (function() {
 	    	render('vote-count', '#vote-count', 'replace', res);
 	    });
 
-	    socket.on('update-chart', function(){
-	    	drawChart(false);
+	    socket.on('update-chart', function(res){
+	    	drawChart(false, res);
 	    	console.log("updating...");
 	    })
 	};
@@ -95,6 +95,10 @@ app.main = (function() {
       		createRoom();
       	});
 
+      	$('.js-btn-close-room').off('click').on('click', function(){
+      		closeRoom(this.id);
+      	})
+
       	$('.js-btn-send-vote').off('click').on('click', function(){
       		sendVote(this.id);
       	});
@@ -129,63 +133,69 @@ app.main = (function() {
     	socket.emit('msg-to-server', msg);
 	};
 
+	var closeRoom = function(msg){
+		console.log("sending close room: ", msg);
+		socket.emit('close-room', msg);
+	};
+
 	var x, y, xAxis, yAxis, line;
 
-	var updateChart = function() {
+	// var updateChart = function() {
 
-		var color = d3.scale.category10();
+	// 	var color = d3.scale.category10();
 
-		// Get the data again
-		d3.csv("data/data.csv", function(error, data) {
-		    data.forEach(function(d) {
-		    	// parsing values // + means it's a number
-		    	d.time = +d.time;
-		    	color.domain(d3.keys(data[0]).filter(function(key) { return key !== "time"; }));	//mapping all values except time
-		    });
+	// 	// Get the data again
+	// 	d3.csv("data/data.csv", function(error, data) {
+	// 	    data.forEach(function(d) {
+	// 	    	// parsing values // + means it's a number
+	// 	    	d.time = +d.time;
+	// 	    	color.domain(d3.keys(data[0]).filter(function(key) { return key !== "time"; }));	//mapping all values except time
+	// 	    });
 
-		    var votes = color.domain().map(function(name) {		//mapping the value of individual votes
-				return {
-					name: name,
-					values: data.map(function(d) {
-						return {time: +d.time, sentiment: +d[name]};
-					})
-				};
-			});
+	// 	    var votes = color.domain().map(function(name) {		//mapping the value of individual votes
+	// 			return {
+	// 				name: name,
+	// 				values: data.map(function(d) {
+	// 					return {time: +d.time, sentiment: +d[name]};
+	// 				})
+	// 			};
+	// 		});
 
-		    // Scale the range of the data
-		    x.domain(d3.extent(data, function(d) { return d.time; }));
+	// 	    // Scale the range of the data
+	// 	    x.domain(d3.extent(data, function(d) { return d.time; }));
 
-			y.domain([
-				0,
-				d3.max(votes, function(c) { return d3.max(c.values, function(v) { return v.sentiment; }); })
-			]);
+	// 		y.domain([
+	// 			0,
+	// 			d3.max(votes, function(c) { return d3.max(c.values, function(v) { return v.sentiment; }); })
+	// 		]);
 
-			// Select the section we want to apply our changes to
-			var svg = d3.select("#chart-container").transition();
+	// 		// Select the section we want to apply our changes to
+	// 		var svg = d3.select("#chart-container").transition();
 
-			svg.select('.line')
-				.duration(100)
-				.attr("d", function(d, i) { return line(d.values); }) 		//get values from votes map function
-				;
+	// 		svg.select('.line')
+	// 			.duration(100)
+	// 			.attr("d", function(d, i) { return line(d.values); }) 		//get values from votes map function
+	// 			;
 
 
-			svg.select('.text')
-				.duration(100)
-				.attr("transform", function(d) { return "translate(" + x(d.value.time) + "," + y(d.value.sentiment) + ")"; })
-				;
+	// 		svg.select('.text')
+	// 			.duration(100)
+	// 			.attr("transform", function(d) { return "translate(" + x(d.value.time) + "," + y(d.value.sentiment) + ")"; })
+	// 			;
 
-			svg.select(".x.axis") // change the x axis
-	            .duration(100)
-	            .call(xAxis)
-	            ;
-	        svg.select(".y.axis") // change the y axis
-	            .duration(100)
-	            .call(yAxis)
-	            ;
-	    });
-	}
+	// 		svg.select(".x.axis") // change the x axis
+	//             .duration(100)
+	//             .call(xAxis)
+	//             ;
+	//         svg.select(".y.axis") // change the y axis
+	//             .duration(100)
+	//             .call(yAxis)
+	//             ;
+	//     });
+	// }
 
-	var drawChart = function( initialize ) {
+	var drawChart = function( initialize, roomid ) {
+		
 		$('#chart-container').empty()
 
 		var margin = {top: 30, right: 20, bottom: 30, left: 50},
@@ -224,7 +234,7 @@ app.main = (function() {
 		var color = d3.scale.category10();
 
 		// Get the data
-		d3.csv("data/data.csv", function(error, data) {
+		d3.csv("data/data"+ roomid +".csv", function(error, data) {
 		    data.forEach(function(d) {
 		    	// parsing values // + means it's a number
 		    	d.time = +d.time;
@@ -282,7 +292,7 @@ app.main = (function() {
 				vote.append("text")		// add text labels
 					.attr('class', 'text')
 					.datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-					.attr("transform", function(d) { return "translate(" + x(d.value.time) + "," + y(d.value.sentiment) + ")"; })
+					.attr("transform", function(d) { return "translate(" + (x(d.value.time) - 20) + "," + (y(d.value.sentiment) - 10) + ")"; })
 					.attr("x", 3)
 					.attr("dy", ".35em")
 					.text(function(d) { return d.name; })

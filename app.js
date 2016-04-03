@@ -1,10 +1,14 @@
 var express     = require('express'),
-    bodyParser  = require('body-parser');   // helper for parsing HTTP requests
+    bodyParser  = require('body-parser')   // helper for parsing HTTP requests
+    cronManager = require('cron-job-manager');
+
 var app = express();                        // our Express app
 var PORT = 4000;
 
 var CronJob = require('cron').CronJob,
     fs = require('fs');
+
+var cron = new cronManager();
 
 // Body Parser
 app.use(bodyParser.urlencoded({ extended: false }));// parse application/x-www-form-urlencoded
@@ -86,7 +90,7 @@ io.on('connection', function(socket) {
         };
 
         // use room id to have different cron for each room
-        startCron(id);
+        startRoom(id);
 
         console.log('New room ID: '+ id + ', Name: '+ rooms[id].name);
         socket.emit('room-list', {
@@ -117,6 +121,20 @@ io.on('connection', function(socket) {
         
         io.to(roomId).emit('update-votes', rooms[roomId].sentiments);
 
+    });
+
+    socket.on('close-room', function(msg){
+        console.log("deleting room ", msg);
+        
+        delete rooms[id];
+        cron.deleteJob(id);
+
+        console.log("room list: ", rooms);
+        console.log("running crons: ", cron);
+
+        socket.emit('room-list', {
+            rooms: rooms
+        });
     });     
 
     //leaving a room
@@ -134,19 +152,16 @@ io.on('connection', function(socket) {
     });
 });
 
-function startCron(id){
-    console.log("starting cron")
+function startRoom(id){
 
     // create file/ overwrite any existing data and start with 0s
-    fs.writeFile('public/data/data.csv', 'time,yay,nay,poop,wtf,uh\n0,0,0,0,0,0\n', function(err) {
-    // fs.writeFile('public/data/data_' + id + '.csv', 'time,votes\n0,0 0 0 0 0\n', function(err) {
+    fs.writeFile('public/data/data'+ id +'.csv', 'time,yay,nay,poop,wtf,uh\n0,0,0,0,0,0\n', function(err) {
         if (err) {
            throw err;
         };
     });
 
-
-    new CronJob('*/2 * * * * *', function(){
+    cron.add(id, '*/2 * * * * *', function(){
 
         // incrememt time
         rooms[id].time += .5;
@@ -157,7 +172,7 @@ function startCron(id){
         dataPoint = dataPoint.toString() + '\n';
 
         // append to end of csv
-        fs.appendFile('public/data/data.csv', dataPoint, function(err) {
+        fs.appendFile('public/data/data'+ id +'.csv', dataPoint, function(err) {
             if (err) {
                 console.log(err);
             } else {
@@ -165,9 +180,10 @@ function startCron(id){
             }
         });
 
-        io.to(id).emit("update-chart");
+        io.to(id).emit("update-chart", id);
+    })
 
-    }, null, true, 'UTC');   
+    cron.start(id);
 }
 
 function leaveAllRooms(socket){
