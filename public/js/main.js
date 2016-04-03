@@ -232,6 +232,7 @@ app.main = (function() {
 		        ;
 
 		var color = d3.scale.category10();
+		var xRange = 30;
 
 		// Get the data
 		d3.csv("data/data"+ roomid +".csv", function(error, data) {
@@ -252,7 +253,20 @@ app.main = (function() {
 			});
 
 		    // Scale the range of the data
-		    x.domain(d3.extent(data, function(d) { return d.time; }));	// scale based on time value 
+		    x.domain(d3.extent(data, function(d) { return d.time; }));
+
+		    // --------------------------------------------- not working, changing domain based on max value
+		 //    x.domain([ 
+		 //    	function(d){ 
+			//     	if (d.time < 30) {
+			//     		return 0;
+			//     	} else {
+			//     		return (d.time - 30);
+			//     	}		
+			// 	},
+			// 	function(d) { return d.time; }
+			// ]);
+			// ---------------------------------------------
 
 			y.domain([		// scale based on max/min value of sentiments
 				0,
