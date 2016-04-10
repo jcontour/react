@@ -43,14 +43,14 @@
 		</div>
 
 		<!-- Input -->
-		<div id="chat-input">
+		<!-- <div id="chat-input">
 			<div>
 				<input type="text" id="js-ipt-room-name" placeholder="Create a new reaction">
 			</div>
 			<div>
 				<button id="js-btn-create-room">CREATE</button>
 			</div>
-		</div>		
+		</div>	 -->	
 
 	</script>
 
@@ -61,6 +61,10 @@
 		<h1>
 			<%= data.name %>
 		</h1>
+
+		<div class="youtube-embed">
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/<%= data.youtubeLinkId %>" frameborder="0" allowfullscreen></iframe>
+		</div>
 		
 		<div class="reaction-container">
 			<div id="vote-count"> </div>
@@ -68,25 +72,25 @@
 		</div>
 
 		<div id="vote-inputs">
-				<button class="js-btn-send-vote inactive" id="yay">🤗</button>
-				<button class="js-btn-send-vote inactive" id="nay">😖</button>
-				<button class="js-btn-send-vote inactive" id="poop">💩</button>
-				<button class="js-btn-send-vote inactive" id="wtf">😡</button>
-				<button class="js-btn-send-vote inactive" id="uh">🤔</button>
+				<button class="js-btn-send-vote inactive" id="one">🤗</button>
+				<button class="js-btn-send-vote inactive" id="two">😖</button>
+				<button class="js-btn-send-vote inactive" id="three">💩</button>
+				<button class="js-btn-send-vote inactive" id="four">😡</button>
+				<button class="js-btn-send-vote inactive" id="five">🤔</button>
 		</div>
 
 	</script>
 
 	<!-- Vote counter -->
-	<script id="tpl-vote-count" type="text/html">
+	<!-- <script id="tpl-vote-count" type="text/html">
 		<ul id="vote-count">
-			<li id="yay"> YAY: <%= data["yay"].length %> </li>
-			<li id="nay"> NAY: <%= data["nay"].length %> </li>
-			<li id="poop"> POOP: <%= data["poop"].length %> </li>
-			<li id="wtf"> WTF: <%= data["wtf"].length %> </li>
-			<li id="uh"> UH:  <%= data["uh"].length %> </li>
+			<li id="one"> one: <%= data["one"].length %> </li>
+			<li id="two"> two: <%= data["two"].length %> </li>
+			<li id="three"> three: <%= data["three"].length %> </li>
+			<li id="four"> four: <%= data["four"].length %> </li>
+			<li id="five"> five:  <%= data["five"].length %> </li>
 		</ul>
-	</script>
+	</script> -->
 	
 	<!-- Graph -->
 	<script id="tpl-graph" type="text/html">

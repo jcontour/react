@@ -38,7 +38,9 @@ server.listen(PORT, function(){
     console.log('Express server is running at ' + PORT);
 });
 
-var rooms = {};
+var rooms = {
+
+};
 var user = {};
 // var users = []
 
@@ -48,10 +50,14 @@ io.on('connection', function(socket) {
     /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
 
     console.log('A new user has connected: ' + socket.id);
+    
+    getEvents(socket);                //reading json schedule file
+    
     // Listeners
 
     // when user enters lobby
     socket.on('lobby', function(){
+
         // send back list of chat rooms available
         socket.emit('room-list', {
             rooms: rooms
@@ -68,34 +74,6 @@ io.on('connection', function(socket) {
         console.log(user);
         // users.push(user);
         // console.log(users);
-    });
-
-    // when user creates a new room
-    socket.on('create-room', function(roomName){
-        // create a random ID of chars & numbers with 7 char
-        var id = createId(7);
-        // append new room to rooms object
-        // [] creates a new parameter of the object
-        rooms[id] = {
-            name: roomName,
-            members: 0,
-            sentiments: {
-                yay: [],
-                nay: [],
-                poop: [],
-                wtf: [],
-                uh: []
-            },
-            time: 0.0
-        };
-
-        // use room id to have different cron for each room
-        startRoom(id);
-
-        console.log('New room ID: '+ id + ', Name: '+ rooms[id].name);
-        socket.emit('room-list', {
-            rooms: rooms
-        });
     });
 
     socket.on('room', function(roomId){
@@ -126,8 +104,8 @@ io.on('connection', function(socket) {
     socket.on('close-room', function(msg){
         console.log("deleting room ", msg);
         
-        delete rooms[id];
-        cron.deleteJob(id);
+        delete rooms[msg];
+        cron.deleteJob(msg);
 
         console.log("room list: ", rooms);
         console.log("running crons: ", cron);
@@ -152,10 +130,98 @@ io.on('connection', function(socket) {
     });
 });
 
+var schedule;
+var reactionDates = [];
+
+
+function getEvents(socket){
+
+    fs.readFile('schedule.json', 'utf8', function (err, data) {
+        console.log("getting schedule of events")
+
+        if (err) throw err;
+        
+        schedule = JSON.parse(data);
+        console.log(schedule['reactions'])
+        
+        // for (var i in schedule['reactions']) {
+        //     console.log(schedule['reactions'][i]['name'] );
+        //     var date = new Date(schedule['reactions'][i]['date'])
+        //     console.log(date);
+        //     reactionDates.push(date)
+        // }
+
+        scheduleEvents(schedule, socket);
+
+    });
+}
+
+function scheduleEvents(schedule, socket){
+    console.log("scheduling events")
+
+    setInterval(function() {
+
+        var now = new Date();
+
+        // checking current time against dates in schedule
+        for(var i = 0; i < schedule['reactions'].length; i ++) {
+
+            // console.log("date ", schedule['reactions'][i]['date']);
+
+            var date = new Date(schedule['reactions'][i]['date'])
+
+            if (now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate() && now.getHours() === date.getHours() + 4 && now.getMinutes() === date.getMinutes() && now.getSeconds() === date.getSeconds()) {
+                console.log("now!")
+                createRoom(schedule['reactions'][i]['name'], schedule['reactions'][i]['youtubeLinkId'], socket);
+
+            }
+        }
+
+    }, 500);
+
+}
+
+function createRoom(roomName, youtubeLinkId, socket){
+    console.log(roomName)
+    console.log(youtubeLinkId)
+
+    // for (var id in rooms) {
+    //     if (rooms[id]['name'] )
+    // }
+    //----------------------------------------------------------need to check to see if event exists already
+    //----------------------------------------------------------right now it's making lots of duplicates
+
+    // create a random ID of chars & numbers with 7 char
+    var id = createId(7);
+    // append new room to rooms object
+    // [] creates a new parameter of the object
+    rooms[id] = {
+        name: roomName,
+        youtubeLinkId: youtubeLinkId,
+        members: 0,
+        sentiments: {
+            one: [],
+            two: [],
+            three: [],
+            four: [],
+            five: []
+        },
+        time: 0.0
+    };
+
+    // use room id to have different cron for each room
+    startRoom(id);
+
+    console.log('New room ID: '+ id + ', Name: '+ rooms[id].name);
+    socket.emit('room-list', {
+        rooms: rooms
+    });
+};
+
 function startRoom(id){
 
     // create file/ overwrite any existing data and start with 0s
-    fs.writeFile('public/data/data'+ id +'.csv', 'time,yay,nay,poop,wtf,uh\n0,0,0,0,0,0\n', function(err) {
+    fs.writeFile('public/data/data'+ id +'.csv', 'time,one,two,three,four,five\n0,0,0,0,0,0\n', function(err) {
         if (err) {
            throw err;
         };
@@ -167,7 +233,7 @@ function startRoom(id){
         rooms[id].time += .5;
 
         // create new data point with time/array of vote values
-        dataPoint = rooms[id].time + "," + rooms[id]['sentiments']['yay'].length + "," + rooms[id]['sentiments']['nay'].length + "," + rooms[id]['sentiments']['poop'].length + "," + rooms[id]['sentiments']['wtf'].length + "," + rooms[id]['sentiments']['uh'].length; 
+        dataPoint = rooms[id].time + "," + rooms[id]['sentiments']['one'].length + "," + rooms[id]['sentiments']['two'].length + "," + rooms[id]['sentiments']['three'].length + "," + rooms[id]['sentiments']['four'].length + "," + rooms[id]['sentiments']['five'].length; 
 
         dataPoint = dataPoint.toString() + '\n';
 

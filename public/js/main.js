@@ -28,14 +28,14 @@ app.main = (function() {
 
 	    	// rendering chart and initing graph
 	    	// separate templates now so we can see vote count change independent of cron updating graph
-	    	render('vote-count', '#vote-count', 'replace', res.room.sentiments);
+	    	// render('vote-count', '#vote-count', 'replace', res.room.sentiments);
 	    	render('graph', '#graph', 'replace')
 	    	drawChart(true);
 	    });
 
 	    socket.on('update-votes', function(res){
 	    	console.log(res);
-	    	render('vote-count', '#vote-count', 'replace', res);
+	    	// render('vote-count', '#vote-count', 'replace', res);
 	    });
 
 	    socket.on('update-chart', function(res){
@@ -90,10 +90,10 @@ app.main = (function() {
 
 	var attachEvents = function(){
 		console.log('Called attachEvents.');
-      	$('#js-btn-create-room').off('click').on('click', function(){
-      		console.log('create room.');
-      		createRoom();
-      	});
+      	// $('#js-btn-create-room').off('click').on('click', function(){
+      	// 	console.log('create room.');
+      	// 	createRoom();
+      	// });
 
       	$('.js-btn-close-room').off('click').on('click', function(){
       		closeRoom(this.id);
@@ -121,12 +121,12 @@ app.main = (function() {
 });
 	};
 
-	var createRoom = function(){
-		var roomName = $('#js-ipt-room-name').val();
-		if(roomName.length > 0){
-			socket.emit('create-room', roomName);
-		}
-	};	
+	// var createRoom = function(){
+	// 	var roomName = $('#js-ipt-room-name').val();
+	// 	if(roomName.length > 0){
+	// 		socket.emit('create-room', roomName);
+	// 	}
+	// };	
 
 	var sendVote = function(msg){
     	console.log('sending ' + msg);
@@ -232,7 +232,7 @@ app.main = (function() {
 		        ;
 
 		var color = d3.scale.category10();
-		var xRange = 30;
+		
 
 		// Get the data
 		d3.csv("data/data"+ roomid +".csv", function(error, data) {
@@ -253,20 +253,15 @@ app.main = (function() {
 			});
 
 		    // Scale the range of the data
-		    x.domain(d3.extent(data, function(d) { return d.time; }));
 
-		    // --------------------------------------------- not working, changing domain based on max value
-		 //    x.domain([ 
-		 //    	function(d){ 
-			//     	if (d.time < 30) {
-			//     		return 0;
-			//     	} else {
-			//     		return (d.time - 30);
-			//     	}		
-			// 	},
-			// 	function(d) { return d.time; }
-			// ]);
-			// ---------------------------------------------
+		    var xRange = 15;
+		    var xMax =	d3.max(data, function(d, i){
+					return d.time;
+				});
+		    var xMin = (xMax < xRange) ? (0) : (xMax - xRange);  // shorthand if/else statement
+		    x.domain([ xMin, xMax
+
+			]);
 
 			y.domain([		// scale based on max/min value of sentiments
 				0,
