@@ -155,3 +155,9 @@ h1{
     font-family: 'Share Tech Mono';
     font-size: 14px;
 }
+
+/*sign in with twitter*/
+#imgTwitter{
+	position: relative;
+  	margin-right: 20px;
+}

@@ -67,6 +67,16 @@ app.main = (function() {
 		socket.emit('user-info', { age : age, party : party, city : city });
 	};
 
+	// var imgTwitter = document.createElement("img");
+	// 	imgTwitter.setAttribute("src", "img/sign-in-with-twitter-gray.png");
+
+	// var body = document.getElementsByTagName("body")[0];
+	// 	body.appendChild(imgTwitter);
+
+	// imgTwitter.addEventListener ("click", function() {
+ //  		alert();
+	// });
+
 	var loadData = function(template, data){
 		console.log('Loading data for: ' + template);
 		socket.emit(template, data);
